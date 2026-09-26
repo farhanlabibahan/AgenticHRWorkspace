@@ -1,0 +1,183 @@
+<!--
+  Chrome refinements the theme API can't express: Geist for the UI, and the
+  sidebar drawn like the app's nav — pill rows, a white selected pill, quiet
+  section headers, a recessed search field.
+-->
+<!-- Our favicon, not Storybook's: with a rel="icon" here Storybook drops its
+     own. The ICO alone, as in the app (public/brand/README.md). -->
+<link rel="icon" href="./brand/favicon/favicon.ico" sizes="any" />
+<link rel="apple-touch-icon" href="./brand/favicon/apple-touch-icon.png" />
+<style>
+  @font-face {
+    font-family: 'Geist';
+    src: url('./fonts/Geist-Regular.woff2') format('woff2');
+    font-weight: 400;
+  }
+  @font-face {
+    font-family: 'Geist';
+    src: url('./fonts/Geist-Medium.woff2') format('woff2');
+    font-weight: 500;
+  }
+  @font-face {
+    font-family: 'Fragment Mono';
+    src: url('./fonts/FragmentMono-Regular.woff2') format('woff2');
+    font-weight: 400;
+  }
+  body,
+  button,
+  input {
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Sidebar rows as pills; the selected row is a white pill, not a blue bar */
+  #storybook-explorer-tree .sidebar-item {
+    border-radius: 9999px;
+    margin: 1px 8px;
+    transition: background-color 150ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  #storybook-explorer-tree .sidebar-item:hover {
+    background: rgba(10, 10, 10, 0.04);
+  }
+  #storybook-explorer-tree .sidebar-item[data-selected='true'] {
+    background: #ffffff;
+    color: #0a0a0a;
+    font-weight: 500;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  }
+  #storybook-explorer-tree .sidebar-item[data-selected='true'] svg {
+    color: #0a0a0a;
+  }
+
+  /* Section roots in sentence case, quiet — like the app's section labels */
+  #storybook-explorer-tree .sidebar-subheading,
+  #storybook-explorer-tree .sidebar-subheading * {
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    color: #6b6a67 !important;
+  }
+  #storybook-explorer-tree .sidebar-subheading {
+    margin-top: 12px;
+  }
+  /* Status markers and per-row context menus are authoring noise in a design book */
+  #storybook-explorer-tree [data-testid='tree-change-status-button'],
+  #storybook-explorer-tree [data-testid='context-menu'] {
+    display: none !important;
+  }
+  #storybook-explorer-tree .sidebar-subheading-action {
+    display: none;
+  }
+
+  /* Search: a recessed field, like the app's. The field is the wrapper —
+     icon, input, shortcut and filter all sit inside it; the input itself
+     stays transparent. */
+  .search-field:has(#storybook-explorer-searchfield) {
+    background: #edece9;
+    border: none;
+    border-radius: 8px;
+    box-shadow: none !important;
+    outline: none !important;
+    transition: background-color 120ms ease, box-shadow 120ms ease;
+  }
+  .search-field:has(#storybook-explorer-searchfield):focus-within {
+    background: #ffffff;
+    box-shadow: 0 0 0 2px rgba(10, 10, 10, 0.14) !important;
+  }
+  #storybook-explorer-searchfield {
+    background: transparent !important;
+    border: none;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  /* ---------- Phones ----------
+     Storybook's mobile chrome puts navigation in a thin bar at the bottom
+     with a 28px target. Move it to the top, make it a full-width 44px pill,
+     and make every row in the navigation sheet a 44px tap target. */
+  @media (max-width: 599px) {
+    #root > div > section:has(> .sb-bar) {
+      order: -1;
+      border-bottom: 1px solid rgba(10, 10, 10, 0.07);
+    }
+    #root .sb-bar {
+      height: 60px;
+      padding: 8px 12px;
+      background: #f5f4f2;
+      border-top: none;
+    }
+    #root .sb-bar button[aria-label='Open navigation menu'] {
+      flex: 1;
+      height: 44px;
+      padding: 0 16px;
+      gap: 10px;
+      border-radius: 9999px;
+      background: #ffffff;
+      font-size: 15px;
+      font-weight: 500;
+      color: #0a0a0a;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+    }
+    #root .sb-bar button[aria-label='Open navigation menu'] svg {
+      width: 18px;
+      height: 18px;
+    }
+    #storybook-explorer-tree .sidebar-item {
+      display: flex;
+      align-items: center;
+      min-height: 44px;
+      font-size: 15px;
+      margin: 2px 8px;
+    }
+    #storybook-explorer-tree .sidebar-subheading {
+      min-height: 36px;
+    }
+
+    /* The navigation menu opens full screen, from where you tapped, with
+       its own header (wordmark + close) and search first — not a
+       half-height sheet rising from the opposite edge under a grey blur. */
+    #storybook-mobile-menu {
+      inset: 0 !important;
+      height: 100dvh !important;
+      max-height: none !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      background: #fdfcfc !important;
+      transform: none !important;
+      transition: none !important;
+      animation: sb-menu-in 150ms ease-out;
+    }
+    #storybook-mobile-menu > div,
+    #storybook-mobile-menu > div > div {
+      height: 100% !important;
+      max-height: none !important;
+    }
+    #storybook-mobile-menu button[aria-label='Close menu'] {
+      width: 44px;
+      height: 44px;
+    }
+    /* sticky while the tree scrolls; a sheet-colored halo covers rows
+       passing behind it */
+    #storybook-mobile-menu .search-field {
+      position: sticky;
+      top: 8px;
+      z-index: 3;
+      height: 44px;
+      margin-bottom: 8px;
+    }
+    #storybook-mobile-menu .search-field {
+      box-shadow: 0 0 0 8px #fdfcfc !important;
+    }
+    #storybook-mobile-menu .search-field:focus-within {
+      box-shadow: 0 0 0 2px rgba(10, 10, 10, 0.14), 0 0 0 8px #fdfcfc !important;
+    }
+    #storybook-mobile-menu #storybook-explorer-searchfield {
+      height: 100%;
+      font-size: 16px; /* 16px keeps iOS from zooming the page on focus */
+    }
+  }
+  @keyframes sb-menu-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+</style>

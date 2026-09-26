@@ -1,0 +1,974 @@
+// OpenATS core schema — Phase 0/1 starter.
+// Full entity design: docs/04-data-model.md. Models land here as their phase ships.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL") // Neon pooled connection
+  directUrl = env("DIRECT_URL") // Neon direct connection (migrations)
+}
+
+// ---------- Tenancy & users ----------
+
+enum OrgKind {
+  COMPANY // hiring for itself
+  AGENCY // staffing agency hiring for client companies
+}
+
+model Organization {
+  id          String    @id @default(uuid())
+  slug        String    @unique
+  name        String
+  kind        OrgKind   @default(COMPANY)
+  onboardedAt DateTime?
+  // Email automation: template ids (null = automation off)
+  autoConfirmTemplateId   String?
+  autoRejectTemplateId    String?
+  autoInterviewTemplateId String?
+  autoRejectDelayHours    Int     @default(48)
+  // Shows the network opt-in checkbox on apply forms; the cloud network
+  // service consumes the resulting consents
+  talentNetworkEnabled Boolean @default(false)
+  // Bias control: hide teammates' scorecards until your own is submitted
+  hideFeedbackUntilSubmitted Boolean @default(false)
+  // GDPR retention: anonymize archived candidates after N months (null = keep forever)
+  retentionMonths Int?
+  // Show the voluntary EEO/OFCCP self-ID block on apply forms
+  collectEeo Boolean @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  users            User[]
+  contacts         Contact[]
+  postings         Posting[]
+  stages           Stage[]
+  archiveReasons   ArchiveReason[]
+  opportunities    Opportunity[]
+  events           Event[]
+  interviews       Interview[]
+  feedback         FeedbackSubmission[]
+  departments      Department[]
+  clientCompanies  ClientCompany[]
+  emailTemplates   EmailTemplate[]
+  emailMessages    EmailMessage[]
+  consents         ConsentRecord[]
+  storedFiles      StoredFile[]
+  apiKeys          ApiKey[]
+  webhookEndpoints WebhookEndpoint[]
+  aiEvaluations    AiEvaluation[]
+  tasks            Task[]
+  offers           Offer[]
+  requisitions     Requisition[]
+  customFieldDefs  CustomFieldDef[]
+  eeoResponses     EeoResponse[]
+  schedulingLinks  SchedulingLink[]
+  reportSchedules  ReportSchedule[]
+  scorecardQuestions ScorecardQuestion[]
+  talentPools      TalentPool[]
+  planSteps        InterviewPlanStep[]
+  campaigns        Campaign[]
+  campaignEnrollments CampaignEnrollment[]
+  savedReports     SavedReport[]
+  transcripts      Transcript[]
+  logoFileId String?
+  logoFile   StoredFile? @relation("OrgLogo", fields: [logoFileId], references: [id])
+  // Approval chain: members request, admins approve before publish / send
+  requirePostingApproval Boolean @default(false)
+  requireOfferApproval   Boolean @default(false)
+  // When a candidate enters a Screen or On-site stage, mint a booking link
+  // and email it (panelist = opportunity owner, else the actor).
+  autoScheduleOnInterviewStages Boolean @default(false)
+
+  approvalRequests ApprovalRequest[]
+  referrals        Referral[]
+}
+
+// Grouping for companies hiring across teams (Engineering, Design…)
+model Department {
+  id       String       @id @default(uuid())
+  orgId    String
+  org      Organization @relation(fields: [orgId], references: [id])
+  name     String
+  postings Posting[]
+
+  @@unique([orgId, name])
+}
+
+// For staffing agencies: the client company a posting is hired for
+model ClientCompany {
+  id       String       @id @default(uuid())
+  orgId    String
+  org      Organization @relation(fields: [orgId], references: [id])
+  name     String
+  postings Posting[]
+
+  @@unique([orgId, name])
+}
+
+enum AccessRole {
+  SUPER_ADMIN
+  ADMIN
+  TEAM_MEMBER
+  LIMITED_TEAM_MEMBER
+  INTERVIEWER
+}
+
+model User {
+  id            String     @id @default(uuid())
+  orgId         String
+  org           Organization @relation(fields: [orgId], references: [id])
+  email         String
+  name          String
+  passwordHash  String? // null for SSO-only users (Phase 3)
+  accessRole    AccessRole @default(TEAM_MEMBER)
+  deactivatedAt DateTime?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  ownedOpportunities Opportunity[] @relation("OpportunityOwner")
+  notes              Note[]
+  panelInterviews    Interview[]          @relation("InterviewPanelists")
+  panelSchedulingLinks SchedulingLink[]   @relation("SchedulingLinkPanelists")
+  createdSchedulingLinks SchedulingLink[] @relation("SchedulingLinkCreator")
+  reportSchedules    ReportSchedule[]
+  feedback           FeedbackSubmission[]
+  assignedTasks      Task[]               @relation("TaskAssignee")
+  requestedApprovals ApprovalRequest[]    @relation("ApprovalRequester")
+  resolvedApprovals  ApprovalRequest[]    @relation("ApprovalResolver")
+  referrals          Referral[]
+
+  @@unique([orgId, email])
+  @@index([orgId])
+}
+
+// ---------- Contacts & opportunities (the Lever model) ----------
+
+model Contact {
+  id             String    @id @default(uuid())
+  orgId          String
+  org            Organization @relation(fields: [orgId], references: [id])
+  name           String
+  headline       String?
+  location       String?
+  emails         String[]
+  phones         String[]
+  links          String[]
+  tags           String[]
+  resumeFileId   String?
+  resumeFile     StoredFile? @relation(fields: [resumeFileId], references: [id], onDelete: SetNull)
+  resumeText     String? // extracted text — future full-text search
+  isAnonymized   Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  opportunities Opportunity[]
+  consents      ConsentRecord[]
+  campaignEnrollments CampaignEnrollment[]
+  pools         TalentPool[]  @relation("PoolMembers")
+  referrals     Referral[]
+
+  @@index([orgId])
+  @@index([orgId, emails])
+}
+
+enum OpportunityStatus {
+  ACTIVE
+  ARCHIVED
+  HIRED
+}
+
+enum Origin {
+  APPLIED
+  SOURCED
+  REFERRED
+  AGENCY
+  INTERNAL
+  UNIVERSITY
+}
+
+model Opportunity {
+  id              String            @id @default(uuid())
+  orgId           String
+  org             Organization      @relation(fields: [orgId], references: [id])
+  contactId       String
+  contact         Contact           @relation(fields: [contactId], references: [id])
+  postingId       String?
+  posting         Posting?          @relation(fields: [postingId], references: [id])
+  stageId         String
+  stage           Stage             @relation(fields: [stageId], references: [id])
+  status          OpportunityStatus @default(ACTIVE)
+  origin          Origin            @default(APPLIED)
+  source          String?
+  archiveReasonId String?
+  archiveReason   ArchiveReason?    @relation(fields: [archiveReasonId], references: [id])
+  archivedAt      DateTime?
+  ownerId         String?
+  owner           User?             @relation("OpportunityOwner", fields: [ownerId], references: [id])
+  confidential    Boolean           @default(false)
+  customFields    Json?
+  // Snoozed candidates are hidden from the pipeline until this passes
+  snoozedUntil    DateTime?
+  stageChangedAt  DateTime          @default(now())
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  stageTransitions StageTransition[]
+  notes            Note[]
+  interviews       Interview[]
+  feedback         FeedbackSubmission[]
+  aiEvaluations    AiEvaluation[]
+  tasks            Task[]
+  offers           Offer[]
+  transcripts      Transcript[]
+  schedulingLinks  SchedulingLink[]
+  referrals        Referral[]
+
+  @@index([orgId, status, stageId])
+  @@index([orgId, postingId])
+  @@index([contactId])
+}
+
+// ---------- Pipeline configuration ----------
+
+enum StageType {
+  LEAD
+  APPLICANT
+  SCREEN
+  ONSITE
+  OFFER
+  HIRED
+}
+
+model Stage {
+  id        String    @id @default(uuid())
+  orgId     String
+  org       Organization @relation(fields: [orgId], references: [id])
+  name      String
+  type      StageType
+  order     Int
+  createdAt DateTime  @default(now())
+
+  opportunities   Opportunity[]
+  transitionsFrom StageTransition[] @relation("FromStage")
+  transitionsTo   StageTransition[] @relation("ToStage")
+
+  @@unique([orgId, order])
+  @@index([orgId])
+}
+
+model ArchiveReason {
+  id                String  @id @default(uuid())
+  orgId             String
+  org               Organization @relation(fields: [orgId], references: [id])
+  name              String
+  countsAsRejection Boolean @default(true)
+
+  opportunities Opportunity[]
+
+  @@index([orgId])
+}
+
+model StageTransition {
+  id            String      @id @default(uuid())
+  opportunityId String
+  opportunity   Opportunity @relation(fields: [opportunityId], references: [id])
+  fromStageId   String?
+  fromStage     Stage?      @relation("FromStage", fields: [fromStageId], references: [id])
+  toStageId     String
+  toStage       Stage       @relation("ToStage", fields: [toStageId], references: [id])
+  actorId       String?
+  occurredAt    DateTime    @default(now())
+
+  @@index([opportunityId])
+}
+
+// ---------- Postings ----------
+
+enum PostingState {
+  DRAFT
+  PENDING_APPROVAL
+  PUBLISHED
+  INTERNAL
+  CLOSED
+}
+
+enum WorkplaceType {
+  ONSITE
+  HYBRID
+  REMOTE
+}
+
+enum Commitment {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERNSHIP
+}
+
+model Posting {
+  id            String        @id @default(uuid())
+  orgId         String
+  org           Organization  @relation(fields: [orgId], references: [id])
+  slug          String
+  title         String
+  state         PostingState  @default(DRAFT)
+  departmentId  String?
+  department    Department?   @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  requisitionId String?
+  requisition   Requisition?  @relation(fields: [requisitionId], references: [id], onDelete: SetNull)
+  clientCompanyId String?
+  clientCompany ClientCompany? @relation(fields: [clientCompanyId], references: [id], onDelete: SetNull)
+  logoFileId    String?
+  logoFile      StoredFile?   @relation("PostingLogo", fields: [logoFileId], references: [id])
+  location      String?
+  workplaceType WorkplaceType @default(ONSITE)
+  commitment    Commitment    @default(FULL_TIME)
+  salaryMin     Int?
+  salaryMax     Int?
+  salaryCurrency String?
+  content       Json? // rich text blocks: description, requirements lists, closing
+  tags          String[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  opportunities Opportunity[]
+  planSteps     InterviewPlanStep[]
+  referrals     Referral[]
+
+  @@unique([orgId, slug])
+  @@index([orgId, state])
+}
+
+// ---------- Collaboration ----------
+
+model Note {
+  id            String       @id @default(uuid())
+  orgId         String
+  opportunityId String
+  opportunity   Opportunity  @relation(fields: [opportunityId], references: [id])
+  authorId      String
+  author        User         @relation(fields: [authorId], references: [id])
+  body          String
+  mentions      String[]
+  createdAt     DateTime     @default(now())
+
+  @@index([opportunityId])
+}
+
+// ---------- Interviews & feedback ----------
+
+enum InterviewState {
+  SCHEDULED
+  COMPLETED
+  CANCELED
+}
+
+model Interview {
+  id            String         @id @default(uuid())
+  orgId         String
+  org           Organization   @relation(fields: [orgId], references: [id])
+  opportunityId String
+  opportunity   Opportunity    @relation(fields: [opportunityId], references: [id])
+  title         String
+  startAt       DateTime
+  durationMins  Int            @default(60)
+  location      String? // room, address, or video link
+  focusAreas    String[] // copied from the plan step at schedule time
+  state         InterviewState @default(SCHEDULED)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  panelists   User[]               @relation("InterviewPanelists")
+  feedback    FeedbackSubmission[]
+  transcripts Transcript[]
+  schedulingLink SchedulingLink?
+
+  @@index([orgId, state, startAt])
+  @@index([opportunityId])
+}
+
+// Fixed scorecard for now: overall 1-4 rating + summary. Versioned
+// configurable form definitions arrive in Phase 2 (docs/04-data-model.md);
+// answers Json is the forward-compatible slot for them.
+enum PoolKind {
+  STATIC // explicit member list
+  DYNAMIC // saved segment: rules evaluated live against the contact base
+}
+
+// Talent pools / saved segments. STATIC pools
+// hold an explicit member list; DYNAMIC pools store filter rules
+// ({ q?, tag?, origin? }) and always reflect the current contact base.
+model TalentPool {
+  id        String       @id @default(uuid())
+  orgId     String
+  org       Organization @relation(fields: [orgId], references: [id])
+  name      String
+  kind      PoolKind     @default(STATIC)
+  rules     Json?
+  createdAt DateTime     @default(now())
+
+  members Contact[] @relation("PoolMembers")
+
+  @@unique([orgId, name])
+  @@index([orgId])
+}
+
+enum ScorecardQuestionKind {
+  RATING // 1-4, same scale as overallRating
+  TEXT
+}
+
+// Org-level configurable scorecard questions, appended to the fixed
+// overall-rating + summary. Answers are snapshotted (label + kind + value)
+// into FeedbackSubmission.answers, so editing or archiving a question never
+// breaks the rendering of past feedback.
+model ScorecardQuestion {
+  id         String                @id @default(uuid())
+  orgId      String
+  org        Organization          @relation(fields: [orgId], references: [id])
+  label      String
+  kind       ScorecardQuestionKind @default(RATING)
+  order      Int                   @default(0)
+  archivedAt DateTime?
+  createdAt  DateTime              @default(now())
+
+  @@index([orgId, order])
+}
+
+model FeedbackSubmission {
+  id            String       @id @default(uuid())
+  orgId         String
+  org           Organization @relation(fields: [orgId], references: [id])
+  opportunityId String
+  opportunity   Opportunity  @relation(fields: [opportunityId], references: [id])
+  interviewId   String?
+  interview     Interview?   @relation(fields: [interviewId], references: [id])
+  authorId      String
+  author        User         @relation(fields: [authorId], references: [id])
+  overallRating Int // 1 strong no · 2 no · 3 yes · 4 strong yes
+  summary       String
+  answers       Json?
+  createdAt     DateTime     @default(now())
+
+  @@index([opportunityId])
+  @@index([orgId])
+}
+
+// Interview/meeting transcript, attached to a candidate's opportunity and
+// optionally to the specific interview it came from. Ingested by paste in
+// the app or pushed by external transcription tools via POST
+// /api/v1/transcripts — the corpus that AI search answers from.
+model Transcript {
+  id            String       @id @default(uuid())
+  orgId         String
+  org           Organization @relation(fields: [orgId], references: [id])
+  opportunityId String
+  opportunity   Opportunity  @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  interviewId   String?
+  interview     Interview?   @relation(fields: [interviewId], references: [id], onDelete: SetNull)
+  title         String
+  content       String // full transcript text
+  source        String       @default("manual") // manual | api | google | otter | …
+  createdAt     DateTime     @default(now())
+
+  @@index([orgId])
+  @@index([opportunityId])
+}
+
+// Interview plan: the ordered interview steps a posting's process expects.
+// Scheduling from a step copies its focus areas onto the interview, which
+// the kit page shows to every panelist (docs/02 §7).
+// Candidate self-scheduling. A recruiter mints a
+// tokened booking link scoped to one opportunity; the candidate picks any
+// open slot inside the window and the booking creates the Interview itself.
+// Single-use: usedAt + interviewId are set atomically at booking time.
+model SchedulingLink {
+  id            String       @id @default(uuid())
+  orgId         String
+  org           Organization @relation(fields: [orgId], references: [id])
+  opportunityId String
+  opportunity   Opportunity  @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  token         String       @unique
+  title         String
+  durationMins  Int          @default(30)
+  location      String?
+  focusAreas    String[]
+  windowDays    Int          @default(14) // bookable horizon from creation
+  dayStartHour  Int          @default(9) // wall-clock hours in `timezone`
+  dayEndHour    Int          @default(17)
+  timezone      String       @default("America/New_York")
+  createdById   String?
+  createdBy     User?        @relation("SchedulingLinkCreator", fields: [createdById], references: [id])
+  interviewId   String?      @unique // set once the candidate books
+  interview     Interview?   @relation(fields: [interviewId], references: [id])
+  usedAt        DateTime?
+  createdAt     DateTime     @default(now())
+
+  panelists User[] @relation("SchedulingLinkPanelists")
+
+  @@index([opportunityId])
+  @@index([orgId])
+}
+
+model InterviewPlanStep {
+  id           String       @id @default(uuid())
+  orgId        String
+  org          Organization @relation(fields: [orgId], references: [id])
+  postingId    String
+  posting      Posting      @relation(fields: [postingId], references: [id], onDelete: Cascade)
+  title        String
+  durationMins Int          @default(60)
+  focusAreas   String[]
+  order        Int
+
+  @@index([postingId, order])
+}
+
+// Multi-step outreach sequences (docs/02 §4 "Email nurture campaigns").
+// Sends run on the email cron. Auto-stop fires when the contact shows new
+// application activity; reply detection needs two-way email sync (Phase 3).
+model Campaign {
+  id        String             @id @default(uuid())
+  orgId     String
+  org       Organization       @relation(fields: [orgId], references: [id])
+  name      String
+  active    Boolean            @default(true)
+  steps     CampaignStep[]
+  enrollments CampaignEnrollment[]
+  createdAt DateTime           @default(now())
+
+  @@index([orgId])
+}
+
+model CampaignStep {
+  id        String   @id @default(uuid())
+  campaignId String
+  campaign  Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  order     Int
+  delayDays Int      @default(0) // days after the previous step (0 = immediately on enroll)
+  subject   String
+  body      String
+
+  @@index([campaignId, order])
+}
+
+model CampaignEnrollment {
+  id         String    @id @default(uuid())
+  orgId      String
+  org        Organization @relation(fields: [orgId], references: [id])
+  campaignId String
+  campaign   Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  contactId  String
+  contact    Contact   @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  nextStep   Int       @default(0) // index into ordered steps; null-equivalent when stopped
+  nextSendAt DateTime?
+  sentCount  Int       @default(0)
+  stoppedAt  DateTime?
+  stopReason String? // completed | applied | manual
+  createdAt  DateTime  @default(now())
+
+  @@unique([campaignId, contactId])
+  @@index([nextSendAt])
+}
+
+// Saved configurations for the custom report builder (docs/02 §9).
+model SavedReport {
+  id        String       @id @default(uuid())
+  orgId     String
+  org       Organization @relation(fields: [orgId], references: [id])
+  name      String
+  config    Json // { groupBy, status?, postingId?, origin?, from?, to? }
+  createdAt DateTime     @default(now())
+
+  @@index([orgId])
+}
+
+enum ReportCadence {
+  DAILY
+  WEEKLY
+}
+
+// Scheduled delivery of the reports digest (headline stats + funnel) to a
+// recipient list, sent from the email cron. lastSentAt gates due-ness.
+model ReportSchedule {
+  id          String        @id @default(uuid())
+  orgId       String
+  org         Organization  @relation(fields: [orgId], references: [id])
+  cadence     ReportCadence @default(WEEKLY)
+  recipients  String[]
+  active      Boolean       @default(true)
+  lastSentAt  DateTime?
+  createdById String?
+  createdBy   User?         @relation(fields: [createdById], references: [id])
+  createdAt   DateTime      @default(now())
+
+  @@index([orgId, active])
+}
+
+enum CustomFieldType {
+  TEXT
+  NUMBER
+  DATE
+  SELECT
+}
+
+// Admin-defined fields rendered on opportunity profiles; values live in
+// Opportunity.customFields keyed by `key` (docs/02 §1 "Custom fields").
+model CustomFieldDef {
+  id      String          @id @default(uuid())
+  orgId   String
+  org     Organization    @relation(fields: [orgId], references: [id])
+  key     String
+  label   String
+  type    CustomFieldType @default(TEXT)
+  options String[] // SELECT choices
+
+  @@unique([orgId, key])
+}
+
+// Voluntary EEO/OFCCP self-identification, stored deliberately WITHOUT any
+// candidate/opportunity linkage — aggregate reporting only, by construction
+// (docs/02 §3 "EEO/OFCCP questions": segregated storage).
+model EeoResponse {
+  id         String       @id @default(uuid())
+  orgId      String
+  org        Organization @relation(fields: [orgId], references: [id])
+  postingId  String? // which role, for aggregate slicing — never who
+  gender     String       @default("declined")
+  race       String       @default("declined")
+  veteran    String       @default("declined")
+  disability String       @default("declined")
+  createdAt  DateTime     @default(now())
+
+  @@index([orgId])
+}
+
+// Assignable to-dos, optionally tied to a candidate. Snoozes surface here too.
+model Task {
+  id            String       @id @default(uuid())
+  orgId         String
+  org           Organization @relation(fields: [orgId], references: [id])
+  opportunityId String?
+  opportunity   Opportunity? @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  assigneeId    String?
+  assignee      User?        @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+  creatorId     String?
+  title         String
+  dueAt         DateTime?
+  completedAt   DateTime?
+  createdAt     DateTime     @default(now())
+
+  @@index([orgId, completedAt, dueAt])
+  @@index([assigneeId])
+}
+
+enum OfferStatus {
+  DRAFT
+  PENDING_APPROVAL
+  SENT
+  ACCEPTED
+  DECLINED
+  WITHDRAWN
+}
+
+// Offer state machine (docs/02 §8). Documents/e-sign are later phases —
+// the record itself is what reporting and the requisition countdown need.
+model Offer {
+  id             String       @id @default(uuid())
+  orgId          String
+  org            Organization @relation(fields: [orgId], references: [id])
+  opportunityId  String
+  opportunity    Opportunity  @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  status         OfferStatus  @default(DRAFT)
+  jobTitle       String
+  salaryAmount   Int?
+  salaryCurrency String       @default("USD")
+  equity         String?
+  startDate      DateTime?
+  expiresAt      DateTime?
+  notes          String?
+  // Offer letter + native e-signature: the letter is a merge-token document
+  // frozen per offer; the candidate signs on the public tokened page by
+  // typing their name (ESIGN-style intent + timestamp kept for audit).
+  letterBody     String?
+  token          String?      @unique
+  viewedAt       DateTime?
+  signedName     String?
+  signedAt       DateTime?
+  createdById    String?
+  sentAt         DateTime?
+  respondedAt    DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([orgId, status])
+  @@index([opportunityId])
+}
+
+enum RequisitionState {
+  OPEN
+  ON_HOLD
+  CLOSED
+}
+
+// Headcount record. Openings decrement (filled increments) on hire of an
+// opportunity attached to one of the requisition's postings.
+model Requisition {
+  id              String           @id @default(uuid())
+  orgId           String
+  org             Organization     @relation(fields: [orgId], references: [id])
+  code            String
+  title           String
+  state           RequisitionState @default(OPEN)
+  openings        Int              @default(1)
+  filled          Int              @default(0)
+  backfill        Boolean          @default(false)
+  salaryMin       Int?
+  salaryMax       Int?
+  salaryCurrency  String           @default("USD")
+  postings        Posting[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@unique([orgId, code])
+  @@index([orgId, state])
+}
+
+enum ApprovalSubject {
+  POSTING
+  OFFER
+  REQUISITION
+}
+
+enum ApprovalState {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELED
+}
+
+// Generic approval queue reused by postings, offers, and (later) requisitions.
+// One pending request per subject; resolving it is what takes the entity live.
+model ApprovalRequest {
+  id            String           @id @default(uuid())
+  orgId         String
+  org           Organization     @relation(fields: [orgId], references: [id])
+  subjectType   ApprovalSubject
+  subjectId     String
+  title         String
+  href          String
+  state         ApprovalState    @default(PENDING)
+  comment       String?
+  requestedById String?
+  requestedBy   User?            @relation("ApprovalRequester", fields: [requestedById], references: [id])
+  resolvedById  String?
+  resolvedBy    User?            @relation("ApprovalResolver", fields: [resolvedById], references: [id])
+  resolution    String?
+  resolvedAt    DateTime?
+  createdAt     DateTime         @default(now())
+
+  @@index([orgId, state])
+  @@index([orgId, subjectType, subjectId])
+}
+
+// Employee referral: a teammate submits a person against a posting (or
+// generally). Creates a Contact + Opportunity with Origin.REFERRED and a
+// row here so the referrer can track status.
+model Referral {
+  id              String       @id @default(uuid())
+  orgId           String
+  org             Organization @relation(fields: [orgId], references: [id])
+  referringUserId String
+  referringUser   User         @relation(fields: [referringUserId], references: [id])
+  contactId       String
+  contact         Contact      @relation(fields: [contactId], references: [id])
+  opportunityId   String
+  opportunity     Opportunity  @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  postingId       String?
+  posting         Posting?     @relation(fields: [postingId], references: [id], onDelete: SetNull)
+  relationship    String?
+  notes           String?
+  createdAt       DateTime     @default(now())
+
+  @@index([orgId])
+  @@index([referringUserId])
+}
+
+// AI-generated candidate evaluation — an advisory read of the profile,
+// never a decision. Recommendation uses the same 1-4 scale as scorecards.
+model AiEvaluation {
+  id             String       @id @default(uuid())
+  orgId          String
+  org            Organization @relation(fields: [orgId], references: [id])
+  opportunityId  String
+  opportunity    Opportunity  @relation(fields: [opportunityId], references: [id])
+  model          String // provider model id, or "mock"
+  recommendation Int // 1 strong no · 2 no · 3 yes · 4 strong yes
+  summary        String
+  strengths      String[]
+  concerns       String[]
+  questions      String[] // suggested interview questions
+  createdAt      DateTime     @default(now())
+
+  @@index([opportunityId])
+  @@index([orgId])
+}
+
+// ---------- API keys (public REST API) ----------
+
+model ApiKey {
+  id         String    @id @default(uuid())
+  orgId      String
+  org        Organization @relation(fields: [orgId], references: [id])
+  name       String
+  keyHash    String    @unique // sha256 of the full key — plaintext never stored
+  prefix     String // first chars for display (oats_xxxx…)
+  lastUsedAt DateTime?
+  revokedAt  DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([orgId])
+}
+
+// ---------- Webhooks ----------
+
+model WebhookEndpoint {
+  id          String       @id @default(uuid())
+  orgId       String
+  org         Organization @relation(fields: [orgId], references: [id])
+  url         String
+  secret      String // HMAC signing secret (shown once)
+  eventTypes  String[] // empty = all events
+  active      Boolean      @default(true)
+  lastEventAt DateTime? // dispatch cursor — events after this get delivered
+  createdAt   DateTime     @default(now())
+
+  deliveries WebhookDelivery[]
+
+  @@index([orgId])
+}
+
+model WebhookDelivery {
+  id            String          @id @default(uuid())
+  endpointId    String
+  endpoint      WebhookEndpoint @relation(fields: [endpointId], references: [id], onDelete: Cascade)
+  eventId       String
+  attempts      Int             @default(0)
+  success       Boolean         @default(false)
+  responseCode  Int?
+  error         String?
+  lastAttemptAt DateTime?
+  createdAt     DateTime        @default(now())
+
+  @@unique([endpointId, eventId])
+  @@index([endpointId, createdAt])
+}
+
+// ---------- Files (resumes, attachments) ----------
+
+model StoredFile {
+  id        String       @id @default(uuid())
+  orgId     String
+  org       Organization @relation(fields: [orgId], references: [id])
+  key       String // storage key (blob path or local relative path)
+  filename  String
+  mime      String
+  size      Int
+  createdAt DateTime     @default(now())
+
+  contacts      Contact[]
+  orgLogoOf     Organization[] @relation("OrgLogo")
+  postingLogoOf Posting[]      @relation("PostingLogo")
+
+  @@index([orgId])
+}
+
+// ---------- Consent (GDPR/CCPA + talent network opt-in) ----------
+
+enum ConsentPurpose {
+  APPLICATION // processing the application itself
+  NETWORK_DISCOVERY // opt-in: discoverable by other employers (cloud network)
+  PROFILE_STORAGE // keep the profile for future applications (declined = erase after process ends)
+}
+
+model ConsentRecord {
+  id            String         @id @default(uuid())
+  orgId         String
+  org           Organization   @relation(fields: [orgId], references: [id])
+  contactId     String
+  contact       Contact        @relation(fields: [contactId], references: [id])
+  purpose       ConsentPurpose
+  policyVersion String         @default("v1")
+  grantedAt     DateTime       @default(now())
+  withdrawnAt   DateTime?
+
+  @@index([orgId, contactId, purpose])
+}
+
+// ---------- Email: templates, messages, scheduling ----------
+
+model EmailTemplate {
+  id        String       @id @default(uuid())
+  orgId     String
+  org       Organization @relation(fields: [orgId], references: [id])
+  name      String
+  subject   String
+  body      String // plain text with {{merge_tokens}}
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  messages EmailMessage[]
+
+  @@index([orgId])
+}
+
+enum EmailStatus {
+  SCHEDULED
+  SENT
+  FAILED
+  CANCELED
+}
+
+model EmailMessage {
+  id            String       @id @default(uuid())
+  orgId         String
+  org           Organization @relation(fields: [orgId], references: [id])
+  contactId     String?
+  opportunityId String?
+  templateId    String?
+  template      EmailTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  senderId      String? // user id; null = automation
+  toEmail       String
+  subject       String
+  body          String
+  status        EmailStatus  @default(SCHEDULED)
+  scheduledAt   DateTime? // null = send immediately
+  sentAt        DateTime?
+  error         String?
+  createdAt     DateTime     @default(now())
+
+  @@index([orgId, status, scheduledAt])
+  @@index([opportunityId])
+}
+
+// ---------- Event stream (activity, audit, webhooks, analytics) ----------
+// Every domain mutation appends here. See docs/03-architecture.md.
+
+model Event {
+  id          String   @id @default(uuid())
+  orgId       String
+  org         Organization @relation(fields: [orgId], references: [id])
+  actorType   String // user | api_key | system | candidate
+  actorId     String?
+  verb        String // e.g. opportunity.stage_changed
+  subjectType String
+  subjectId   String
+  payload     Json?
+  occurredAt  DateTime @default(now())
+
+  @@index([orgId, occurredAt])
+  @@index([orgId, subjectType, subjectId])
+}

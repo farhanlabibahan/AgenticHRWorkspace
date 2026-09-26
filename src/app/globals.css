@@ -1,0 +1,679 @@
+@import 'tailwindcss';
+
+/*
+ * Source design system — see docs/09-design-system.md for the rules.
+ * Value-based depth: canvas → surface (lighter) / recessed (darker), no borders.
+ * The UI is achromatic; color belongs to orbs (identity) and small status signals.
+ * Font variables (--font-geist, --font-fragment-mono) are set by next/font in layout.tsx.
+ */
+
+@theme {
+  --font-sans: var(--font-geist), system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, sans-serif;
+  --font-mono: var(--font-fragment-mono), ui-monospace, Menlo, Consolas, monospace;
+
+  /* Surfaces */
+  --color-sheet: #fdfcfc; /* marketing page ground (after elevenlabs.io); cards on it use canvas */
+  --color-canvas: #f5f4f2;
+  --color-surface: #ffffff;
+  --color-recessed: #edece9;
+  --color-muted: #f2f1ef;
+
+  /* Ink */
+  --color-ink: #0a0a0a;
+  --color-ink-2: #6b6a67;
+  --color-ink-3: #9b9a96;
+  --color-line: rgb(10 10 10 / 0.07);
+  --color-line-strong: rgb(10 10 10 / 0.14);
+
+  /* Brand: primary buttons. Ink unless an organization's brand kit sets a
+     color on the pages candidates see (lib/brand.ts). */
+  --color-brand: var(--color-ink);
+  --color-on-brand: var(--color-canvas);
+
+  /* Status — small doses: text, 6px dots, /10 tints */
+  --color-positive: #3f8f5f;
+  --color-caution: #b7791f;
+  --color-critical: #d14d41;
+  --color-info: #4f7fb8;
+
+  /* Type scale — UI band (fine steps) + display band (large steps), 4px line grid */
+  --text-2xs: 11px;
+  --text-2xs--line-height: 16px;
+  --text-xs: 12px;
+  --text-xs--line-height: 16px;
+  --text-sm: 13px;
+  --text-sm--line-height: 20px;
+  --text-base: 14px;
+  --text-base--line-height: 20px;
+  --text-md: 16px;
+  --text-md--line-height: 24px;
+  --text-md--letter-spacing: -0.005em;
+  --text-lg: 18px;
+  --text-lg--line-height: 24px;
+  --text-lg--letter-spacing: -0.01em;
+  --text-xl: 20px;
+  --text-xl--line-height: 28px;
+  --text-xl--letter-spacing: -0.015em;
+  --text-2xl: 24px;
+  --text-2xl--line-height: 32px;
+  --text-2xl--letter-spacing: -0.02em;
+  --text-3xl: 32px;
+  --text-3xl--line-height: 36px;
+  --text-3xl--letter-spacing: -0.025em;
+  --text-4xl: 44px;
+  --text-4xl--line-height: 48px;
+  --text-4xl--letter-spacing: -0.03em;
+  --text-5xl: 56px;
+  --text-5xl--line-height: 60px;
+  --text-5xl--letter-spacing: -0.035em;
+  --text-6xl: 72px;
+  --text-6xl--line-height: 72px;
+  --text-6xl--letter-spacing: -0.04em;
+
+  /* Radii — pill = press, field = type, card = contain */
+  --radius-box: 5px; /* checkbox */
+  --radius-field: 8px;
+  --radius-card: 12px;
+  --radius-dialog: 16px;
+  --radius-media: 24px;
+
+  /* Elevation — only floating things get a shadow */
+  --shadow-float: 0 12px 32px -12px rgb(0 0 0 / 0.14), 0 0 0 1px rgb(0 0 0 / 0.04);
+  --shadow-lift: 0 8px 24px -12px rgb(0 0 0 / 0.12);
+
+  /* Selected state — a 1px gray stroke on a surface, never a heavy ink ring */
+  --color-selected: rgb(10 10 10 / 0.2);
+
+  /* Motion — the transitions.dev scale (docs/09 §9). Match on usage, not number.
+     Retuned 2026-09-25 to feel smoother: an ease-out cubic in place of the
+     quint (less of the move in the first frames), and each duration about a
+     quarter longer. */
+  --ease-standard: cubic-bezier(0.33, 1, 0.68, 1); /* open/close, slide, resize, position */
+  --ease-smooth: cubic-bezier(0.33, 1, 0.68, 1);
+  --ease-smooth-out: cubic-bezier(0.32, 0, 0.67, 0); /* ease-smooth reversed: an exit that replays its entrance */
+  --ease-bounce: cubic-bezier(0.34, 1.36, 0.64, 1); /* pop open: badges, digits, toggle */
+  --ease-bounce-strong: cubic-bezier(0.34, 3.85, 0.64, 1); /* bouncy hover-out */
+  --ease-ios: cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+:root {
+  --duration-stagger: 50ms; /* per-item stagger offset */
+  --duration-micro: 100ms; /* tooltip/path delay, shake segment */
+  --duration-quick: 200ms; /* menu/modal close, text swap, tooltip in */
+  --duration-fast: 320ms; /* icon swap, menu/modal open, tabs sliding */
+  --duration-medium: 420ms; /* panel close, toast close, toggle */
+  --duration-slow: 480ms; /* panel open, content reveal */
+  --duration-very-slow: 600ms; /* emphasis: digits, text reveal, success, charts */
+  --blur-small: 2px;
+  --blur-medium: 3px;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+.dark {
+  --color-brand: var(--color-ink);
+  --color-on-brand: var(--color-canvas);
+  --color-sheet: #0a0a09;
+  --color-canvas: #0f0f0e;
+  --color-surface: #1a1a19;
+  --color-recessed: #232321;
+  --color-muted: #262624;
+  --color-ink: #f5f4f2;
+  --color-ink-2: #a3a29e;
+  --color-ink-3: #6b6a67;
+  --color-line: rgb(255 255 255 / 0.08);
+  --color-line-strong: rgb(255 255 255 / 0.14);
+  --color-positive: #5fb482;
+  --color-caution: #d9a441;
+  --color-critical: #ec7064;
+  --color-info: #7aa5d8;
+}
+
+/* Marketing hero wash — a cool breath fading into the canvas */
+:root {
+  --hero-gradient-from: #e4e6e8;
+  --hero-gradient-to: var(--color-canvas);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-line);
+  }
+  ::selection {
+    background: var(--color-ink);
+    color: var(--color-surface);
+  }
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-ink-3);
+  }
+}
+
+/* Subtle scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-line-strong);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-ink-3);
+}
+
+/* Buttons are actions — restore the pointer Tailwind v4 preflight removes */
+button:not(:disabled),
+[role='button']:not(:disabled) {
+  cursor: pointer;
+}
+
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Selected state (docs/09 §8): the chosen card, tile, chip, or option sits on
+   a surface with a 1px gray stroke. Inset shadow, so selection never shifts
+   layout; the stroke eases in with the fill. */
+@utility is-selected {
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  box-shadow: inset 0 0 0 1px var(--color-selected);
+}
+/* A field being typed into (inputs, textareas, an open FormSelect): the
+   recessed well lifts to white and takes the same 1px gray stroke as a
+   selected thing. All inset, so a scrolling or overflow-hidden parent
+   (sidebars, drawers, lists) can never clip it. */
+@utility is-focused {
+  background-color: var(--color-surface);
+  box-shadow: inset 0 0 0 1px var(--color-selected);
+}
+@utility selectable {
+  transition:
+    background-color var(--duration-quick) var(--ease-smooth),
+    box-shadow var(--duration-quick) var(--ease-smooth),
+    color var(--duration-quick) var(--ease-smooth);
+}
+
+/* ---------- Motion system ---------- */
+
+/* No animation here blurs (filter: blur). A blur makes the GPU redraw the
+   element every frame, and on a large one (a drawer, a table) that shows
+   as lag. Fades, rises and scales only. Static blurs (frosted glass,
+   backdrop-blur) are fine: they don't animate. */
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Menus (Radix dropdown/select): origin-aware grow from the trigger,
+   softer and faster on close. Radix keeps the node mounted through the
+   closed-state animation. */
+@keyframes t-menu-in {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes t-menu-out {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.99); }
+}
+.menu-animate {
+  transform-origin: var(--radix-dropdown-menu-content-transform-origin, top);
+}
+.menu-animate[data-state='open'] {
+  animation: t-menu-in var(--duration-fast) var(--ease-smooth);
+}
+.menu-animate[data-state='closed'] {
+  animation: t-menu-out var(--duration-quick) var(--ease-smooth) forwards;
+}
+
+/* Scrolling sheets (the profile drawer): a thin rounded thumb with no track,
+   held off the rounded corners, instead of the platform scrollbar cutting
+   through them. Firefox takes the thin native one. */
+.sheet-scroll::-webkit-scrollbar {
+  width: 14px;
+}
+.sheet-scroll::-webkit-scrollbar-track {
+  background: transparent;
+  margin-block: 16px;
+}
+.sheet-scroll::-webkit-scrollbar-thumb {
+  background-color: color-mix(in oklab, var(--color-ink) 16%, transparent);
+  background-clip: padding-box;
+  border: 4px solid transparent;
+  border-radius: 9999px;
+}
+.sheet-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in oklab, var(--color-ink) 28%, transparent);
+}
+@supports not selector(::-webkit-scrollbar) {
+  .sheet-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--color-ink) 16%, transparent) transparent;
+  }
+}
+
+/* A refreshed /candidates/[id] page draws its own drawer; if an in-app
+   navigation then opens one over it (switching applications), only the top
+   one shows (drawer-host.tsx). */
+body:has([data-drawer-intercepted]) [data-drawer-standalone] {
+  visibility: hidden;
+}
+
+/* Candidate drawer, skeleton → profile (drawer-host.tsx). The skeleton stays
+   behind the content and the two crossfade when the profile lands. The fade
+   starts only once the profile has painted (DrawerContent marks it
+   data-shown two frames after it mounts): its mount is heavy, and a fade
+   that started at insertion ran its clock out while nothing could be
+   drawn, so the first visible frame was the finished fade, a pop. Even
+   ease-in-out, since an ease-out put most of the change into the first
+   frames. A page load (standalone) shows the profile at once: there the
+   whole page is arriving anyway. */
+[data-drawer-skeleton],
+[data-drawer-intercepted] [data-profile] {
+  transition: opacity 300ms cubic-bezier(0.45, 0, 0.55, 1);
+}
+[data-drawer-intercepted] [data-profile]:not([data-shown]) {
+  opacity: 0;
+}
+[data-drawer-body]:has([data-profile][data-shown]) > [data-drawer-skeleton],
+[data-drawer-standalone] [data-drawer-body]:has([data-profile]) > [data-drawer-skeleton] {
+  opacity: 0;
+}
+/* Skeletons (components/ui/skeleton.tsx): gray shapes with one light band
+   sweeping across the whole layout, top-left to bottom-right, in step with
+   the clock. Only the band's
+   transform animates, so it keeps moving while a page mounts. The old pulse
+   faded a pale gray on white and barely showed. */
+.skel {
+  position: relative;
+  overflow: hidden;
+  background-color: color-mix(in oklab, var(--color-ink) 9%, transparent);
+}
+.skel::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 280px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--color-surface) 60%, transparent),
+    transparent
+  );
+  transform: translateX(-280px);
+  animation: t-skel-sweep 1800ms linear infinite;
+  animation-delay: var(--skel-delay, 0ms);
+}
+/* One 280px band crossing the whole skeleton at a constant speed: each
+   shape's copy starts behind its own left edge by --skel-x (its position in
+   the layout, a little later the lower it sits) and ends past --skel-span
+   (the layout's width), so every shape shows the band only while the one
+   band is over it. A band the width of each shape read as a ripple of
+   glints; peaking at 60% toward the surface keeps shapes from vanishing
+   into white cards or glowing on the page background. */
+@keyframes t-skel-sweep {
+  from { transform: translateX(calc(-280px - var(--skel-x, 0) * 1px)); }
+  to { transform: translateX(calc((var(--skel-span, 1600) - var(--skel-x, 0)) * 1px)); }
+}
+/* …and fades off toward the bottom instead of stopping partway down. */
+.skel-fade {
+  mask-image: linear-gradient(to bottom, #000 65%, transparent 100%);
+}
+
+/* Dialogs (Radix): the scrim fades and the card grows like a menu; both
+   leave faster than they came. */
+.dialog-overlay[data-state='open'] {
+  animation: t-sheet-in var(--duration-fast) var(--ease-smooth);
+}
+.dialog-overlay[data-state='closed'] {
+  /* t-sheet-out, not t-sheet-in reversed: with the entrance's name Radix
+     unmounted the scrim at once, so it vanished while the card still faded. */
+  animation: t-sheet-out var(--duration-quick) var(--ease-smooth) forwards;
+}
+.dialog-animate[data-state='open'] {
+  animation: t-menu-in var(--duration-fast) var(--ease-smooth);
+}
+.dialog-animate[data-state='closed'] {
+  animation: t-menu-out var(--duration-quick) var(--ease-smooth) forwards;
+}
+
+/* Share preview (share-link-button.tsx): its text lines draw in left to
+   right after the header rises, then pulse until the link is ready. */
+@keyframes t-bar-draw {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.share-bar {
+  transform-origin: left;
+  animation: t-bar-draw var(--duration-very-slow) var(--ease-smooth) both;
+  animation-delay: calc(var(--i, 0) * var(--duration-stagger) * 2);
+}
+.share-bar[data-working] {
+  animation:
+    t-bar-draw var(--duration-very-slow) var(--ease-smooth) both,
+    t-skel-pulse 1000ms ease-in-out infinite;
+  animation-delay:
+    calc(var(--i, 0) * var(--duration-stagger) * 2),
+    calc(var(--duration-very-slow) + var(--i, 0) * var(--duration-stagger) * 2);
+}
+
+/* A field the browser flagged as invalid (field-validation.tsx sets
+   aria-invalid): a critical stroke, focused or not. Unlayered on purpose,
+   so it wins over the focus utility. The note under it rises in. */
+[aria-invalid='true'].rounded-field {
+  box-shadow: inset 0 0 0 1px var(--color-critical);
+}
+@keyframes t-note-in {
+  from { opacity: 0; transform: translateY(-2px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.field-note {
+  animation: t-note-in var(--duration-quick) var(--ease-smooth);
+}
+
+/* Scrim fades (.dialog-overlay). Separate names in and out: Radix only
+   keeps a closing dialog mounted when the exit animation's name differs
+   from the entrance's. */
+@keyframes t-sheet-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes t-sheet-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* Content reveal (expanding cards, streamed sections) */
+@keyframes fade-rise {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-rise {
+  animation: fade-rise var(--duration-fast) var(--ease-smooth);
+}
+
+/* Skeleton → content: real content fades in. Put it on the element that
+   replaces a Suspense fallback so it plays once per load. Opacity only — a
+   blur here repaints the whole screen (a 100-row table) every frame. */
+@keyframes t-reveal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.t-reveal {
+  /* short and backwards-filled: content is ready ~65ms after a click, so the
+     fade must not hold the screen, and no style lingers once it's done */
+  animation: t-reveal 120ms ease-out backwards;
+}
+@keyframes t-skel-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.t-skel-pulse {
+  animation: t-skel-pulse 1000ms ease-in-out infinite;
+}
+
+/* A list waiting on the server for another view: a thin indeterminate bar
+   over the (dimmed) rows. Static under reduced motion. */
+@keyframes list-progress {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(250%); }
+}
+.list-progress::before {
+  content: '';
+  display: block;
+  width: 40%;
+  height: 100%;
+  background: var(--color-ink-2);
+  animation: list-progress 900ms var(--ease-smooth, ease-in-out) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .list-progress::before {
+    width: 100%;
+    animation: none;
+    opacity: 0.5;
+  }
+}
+
+/* Texts reveal — headline, then its supporting line 40ms later */
+@keyframes t-rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.t-rise {
+  animation: t-rise var(--duration-very-slow) var(--ease-smooth) both;
+  animation-delay: calc(var(--i, 0) * var(--duration-stagger));
+}
+
+/* Toasts (toaster.tsx): rise in from below, sink out faster */
+@keyframes t-toast-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.t-toast {
+  animation: t-toast-in var(--duration-fast) var(--ease-smooth) both;
+}
+.t-toast[data-leaving] {
+  animation: t-toast-in var(--duration-quick) var(--ease-smooth) reverse forwards;
+}
+
+/* Text swap — a label changes in place (Save → Saving… → Saved) */
+@keyframes t-swap-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.t-swap {
+  display: inline-block;
+  animation: t-swap-in var(--duration-quick) ease-in-out both;
+}
+
+/* Icon swap — two icons share a slot; the outgoing one shrinks and fades */
+.t-icon-swap {
+  display: inline-grid;
+}
+.t-icon-swap > * {
+  grid-area: 1 / 1;
+  transition:
+    opacity var(--duration-fast) ease-in-out,
+    transform var(--duration-fast) ease-in-out;
+}
+.t-icon-swap > [data-hidden='true'] {
+  opacity: 0;
+  transform: scale(0.25);
+}
+
+/* Number pop-in — each digit re-enters with a rise, staggered */
+@keyframes t-digit-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.t-digit {
+  display: inline-block;
+  animation: t-digit-in var(--duration-very-slow) cubic-bezier(0.34, 1.45, 0.64, 1) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+
+/* Shimmer — a highlight band sweeps the glyphs of in-progress text */
+.t-shimmer {
+  position: relative;
+  display: inline-block;
+  color: var(--color-ink-3);
+}
+.t-shimmer::before {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 40%,
+    var(--color-ink) 50%,
+    transparent 60%,
+    transparent 100%
+  );
+  background-size: 400% 100%;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: t-shimmer 2000ms linear infinite;
+}
+@keyframes t-shimmer {
+  from { background-position: 100% 0; }
+  to { background-position: 0% 0; }
+}
+
+/* Streaming text — words fade in as they arrive */
+@keyframes t-stream-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.t-stream-w {
+  animation: t-stream-in var(--duration-medium) var(--ease-smooth) both;
+  animation-delay: calc(var(--i, 0) * 60ms);
+}
+
+/* Error shake — four legs, 280ms total, on invalid submit */
+@keyframes t-shake {
+  0% { transform: translateX(0); animation-timing-function: var(--ease-smooth); }
+  28.57% { transform: translateX(6px); animation-timing-function: var(--ease-smooth); }
+  57.14% { transform: translateX(-6px); animation-timing-function: var(--ease-smooth); }
+  78.57% { transform: translateX(4px); animation-timing-function: var(--ease-smooth); }
+  100% { transform: translateX(0); }
+}
+.t-shake {
+  animation: t-shake 280ms linear;
+}
+
+/* Learn-more hover — a trailing arrow nudges forward when its link is hovered */
+.t-learn-arrow {
+  display: inline-flex;
+  transition: transform var(--duration-medium) var(--ease-smooth);
+}
+:hover > .t-learn-arrow,
+:focus-visible > .t-learn-arrow {
+  transform: translateX(2px);
+}
+
+/* Accordion — grid-rows 0fr → 1fr with the body fading in */
+.t-acc-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--duration-fast) var(--ease-smooth);
+}
+.t-acc-panel > * {
+  overflow: hidden;
+  min-height: 0;
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-smooth);
+}
+[data-open='true'] > .t-acc-panel {
+  grid-template-rows: 1fr;
+}
+[data-open='true'] > .t-acc-panel > * {
+  opacity: 1;
+}
+.t-acc-chevron {
+  transition: transform var(--duration-fast) var(--ease-smooth);
+}
+[data-open='true'] .t-acc-chevron {
+  transform: scaleY(-1);
+}
+
+/* Checkbox — the check draws on with a stroke path (see ui/checkbox.tsx) */
+.t-check-path {
+  stroke-dasharray: 15;
+  stroke-dashoffset: 15;
+  transition: stroke-dashoffset var(--duration-quick) var(--ease-smooth);
+}
+.peer:checked ~ * .t-check-path,
+[aria-checked='true'] .t-check-path {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset var(--duration-medium) var(--ease-smooth);
+}
+
+/* Toggle — the thumb overshoots and settles (double bounce) */
+@keyframes t-toggle-on {
+  0% { translate: 0 0; }
+  55% { translate: calc(var(--toggle-travel) + 1px) 0; }
+  100% { translate: var(--toggle-travel) 0; }
+}
+@keyframes t-toggle-off {
+  0% { translate: var(--toggle-travel) 0; }
+  55% { translate: -1px 0; }
+  100% { translate: 0 0; }
+}
+
+/* Success check — rotate + rise, then the path draws */
+@keyframes t-success {
+  from { opacity: 0; transform: translateY(6px) rotate(80deg); }
+  to { opacity: 1; transform: translateY(0) rotate(0); }
+}
+.t-success {
+  animation: t-success var(--duration-very-slow) var(--ease-smooth) both;
+}
+.t-success .t-check-path {
+  stroke-dashoffset: 0;
+  animation: t-check-draw var(--duration-very-slow) var(--ease-smooth) var(--duration-micro) both;
+}
+@keyframes t-check-draw {
+  from { stroke-dashoffset: 15; }
+  to { stroke-dashoffset: 0; }
+}
+
+/* Avatar stack — hovered avatar lifts; neighbours follow at 45% */
+.t-stack > * {
+  transition: transform 320ms var(--ease-bounce-strong);
+}
+.t-stack > *:hover {
+  transform: translateY(-4px) scale(1.05);
+  transition: transform 320ms var(--ease-smooth);
+}
+.t-stack > *:has(+ *:hover),
+.t-stack > *:hover + * {
+  transform: translateY(-1.8px);
+  transition: transform 320ms var(--ease-smooth);
+}
+
+/* Orb — slow drift of the inner gradient field (see components/ui/orb.tsx) */
+@keyframes orb-drift {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

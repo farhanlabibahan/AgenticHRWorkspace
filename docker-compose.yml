@@ -1,0 +1,78 @@
+# One-command self-host: `docker compose up` → http://localhost:3000/signup
+# Postgres is the only hard dependency. Set SMTP_URL to send real email;
+# leave it unset and emails are logged and marked sent (dev mode).
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: openats
+      POSTGRES_PASSWORD: openats
+      POSTGRES_DB: openats
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U openats']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://openats:openats@db:5432/openats
+      DIRECT_URL: postgresql://openats:openats@db:5432/openats
+      # Generate your own: openssl rand -base64 32
+      AUTH_SECRET: ${AUTH_SECRET:-change-me-in-production}
+      # SMTP_URL: smtp://user:pass@smtp.example.com:587
+      # EMAIL_FROM: "Acme Recruiting <careers@acme.com>"
+      # Protects /api/cron/*; the cron service below reads the same variable.
+      CRON_SECRET: ${CRON_SECRET:-}
+      # Resume parsing (docs/resume-parsing.md): a Groq key, or a model on
+      # your own machine through Ollama's OpenAI-compatible endpoint.
+      # GROQ_API_KEY: ""
+      # RESUME_PARSER_BASE_URL: http://host.docker.internal:11434/v1
+      # RESUME_PARSER_MODEL: gpt-oss:20b
+      # RESUME_PARSER_TIMEOUT_MS: "120000"
+    # On Linux, host.docker.internal needs this:
+    # extra_hosts:
+    #   - host.docker.internal:host-gateway
+    ports:
+      - '3000:3000'
+    volumes:
+      - uploads:/app/.data
+
+  # Scheduled work (email delivery, webhooks, feedback reminders, retention,
+  # resume text, scanned-resume OCR, resume parsing).
+  # Vercel Cron does this on the managed deployment; self-host uses any cron.
+  cron:
+    image: alpine:3
+    depends_on:
+      - app
+    environment:
+      # Must match the app's CRON_SECRET (when set, the cron routes require it)
+      CRON_SECRET: ${CRON_SECRET:-}
+    command: >
+      sh -c 'apk add --no-cache curl >/dev/null;
+      auth="Authorization: Bearer $$CRON_SECRET";
+      i=0;
+      while true; do
+        sleep 60;
+        curl -sf -H "$$auth" http://app:3000/api/cron/imports >/dev/null 2>&1 &
+        i=$$((i + 1));
+        if [ $$((i % 10)) -eq 0 ]; then
+          curl -sf -H "$$auth" http://app:3000/api/cron/emails >/dev/null 2>&1;
+          curl -sf -H "$$auth" http://app:3000/api/cron/webhooks >/dev/null 2>&1;
+          curl -sf -H "$$auth" http://app:3000/api/cron/retention >/dev/null 2>&1;
+          curl -sf -H "$$auth" http://app:3000/api/cron/resume-text >/dev/null 2>&1 &
+          curl -sf -H "$$auth" http://app:3000/api/cron/ocr >/dev/null 2>&1 &
+          curl -sf -H "$$auth" http://app:3000/api/cron/resume-parse >/dev/null 2>&1 &
+          curl -sf -H "$$auth" http://app:3000/api/cron/transcripts >/dev/null 2>&1 &
+        fi;
+      done'
+
+volumes:
+  db-data:
+  uploads:

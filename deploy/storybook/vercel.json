@@ -1,0 +1,8 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "cd ../.. && npm ci",
+  "buildCommand": "cd ../.. && npx storybook build --quiet -o deploy/storybook/dist",
+  "outputDirectory": "dist",
+  "ignoreCommand": "cd ../.. && git diff --quiet HEAD^ HEAD -- src .storybook public package.json package-lock.json deploy/storybook"
+}

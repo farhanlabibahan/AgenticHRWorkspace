@@ -1,0 +1,65 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /FontDescriptor /FontName /KozMinPr6N-Regular /Flags 4 /FontBBox [0 -120 1000 880] /ItalicAngle 0 /Ascent 880 /Descent -120 /CapHeight 700 /StemV 80 >>
+endobj
+2 0 obj
+<< /Type /Font /Subtype /CIDFontType0 /BaseFont /KozMinPr6N-Regular /CIDSystemInfo << /Registry (Adobe) /Ordering (Japan1) /Supplement 6 >> /FontDescriptor 1 0 R /DW 1000 >>
+endobj
+3 0 obj
+<< /Length 331 >>
+stream
+/CIDInit /ProcSet findresource begin 12 dict begin begincmap
+/CIDSystemInfo << /Registry (Adobe) /Ordering (UCS) /Supplement 0 >> def
+/CMapName /Adobe-Identity-UCS def /CMapType 2 def
+1 begincodespacerange <00> <FF> endcodespacerange
+1 beginbfchar <41> <2F2F> endbfchar
+endcmap CMapName currentdict /CMap defineresource pop end end
+endstream
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type0 /BaseFont /KozMinPr6N-Regular /Encoding /UniJIS-UCS2-H /DescendantFonts [2 0 R] >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding /ToUnicode 3 0 R >>
+endobj
+7 0 obj
+<< /Length 250 >>
+stream
+BT /F2 12 Tf 0 Tc 72 730 Td (Rowan Q. Testperson \267 r\351sum\351) Tj ET
+BT /F1 16 Tf 72 700 Td <65E5672C8A9E30A830F330B830CB30A2> Tj ET
+BT /F1 12 Tf 72 676 Td <4EBA> Tj ET
+BT /F3 12 Tf 84 676 Td (A) Tj ET
+BT /F1 12 Tf 92.004 676 Td <77E580FD> Tj ET
+endstream
+endobj
+8 0 obj
+<< /Type /Pages /Kids [9 0 R] /Count 1 >>
+endobj
+9 0 obj
+<< /Type /Page /Parent 8 0 R /MediaBox [0 0 612 792] /Contents 7 0 R /Resources << /Font << /F1 4 0 R /F2 5 0 R /F3 6 0 R >> >> >>
+endobj
+10 0 obj
+<< /Type /Catalog /Pages 8 0 R >>
+endobj
+xref
+0 11
+0000000000 65535 f 
+0000000015 00000 n 
+0000000191 00000 n 
+0000000380 00000 n 
+0000000762 00000 n 
+0000000891 00000 n 
+0000000988 00000 n 
+0000001102 00000 n 
+0000001403 00000 n 
+0000001460 00000 n 
+0000001606 00000 n 
+trailer
+<< /Size 11 /Root 10 0 R /ID [<db59ef1e9b4d90f0e407d449253da795> <db59ef1e9b4d90f0e407d449253da795>] >>
+startxref
+1656
+%%EOF

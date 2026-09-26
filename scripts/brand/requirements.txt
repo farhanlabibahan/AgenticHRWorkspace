@@ -1,0 +1,6 @@
+# scripts/brand/make-brand-assets.py — the versions the committed assets were built with.
+fonttools==4.66.0
+brotli==1.2.0
+uharfbuzz==0.56.2
+freetype-py==2.5.1
+pillow==12.3.0

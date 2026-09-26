@@ -1,0 +1,63 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Specimen, Grid, Swatch } from '../kit';
+import { Orb } from '@/components/ui/orb';
+import { ORB_PALETTES } from '@/components/ui/orb-palettes';
+import { StatusDot } from '@/components/ui/primitives';
+
+<Meta title="Foundations/Color" />
+
+# Color
+
+The interface is achromatic. Depth is a ladder of values: the **canvas** is the page, **surfaces** sit one step lighter, **recessed** fields one step darker. Color enters only through the orb and small status signals.
+
+## Surfaces
+
+<Specimen>
+  <Grid>
+    <Swatch token="sheet" value="#FDFCFC" use="Marketing page ground" />
+    <Swatch token="canvas" value="#F5F4F2" use="App page; cards on the sheet" />
+    <Swatch token="surface" value="#FFFFFF" use="Cards, chips, menus, nav" />
+    <Swatch token="recessed" value="#EDECE9" use="Inputs and tracks" />
+    <Swatch token="muted" value="#F2F1EF" use="Fills inside a surface" />
+  </Grid>
+</Specimen>
+
+## Ink
+
+<Specimen>
+  <Grid>
+    <Swatch token="ink" value="#0A0A0A" use="Text; the one primary action" />
+    <Swatch token="ink-2" value="#6B6A67" use="Secondary text — AA on every surface" />
+    <Swatch token="ink-3" value="#9B9A96" use="Placeholder and decoration only" />
+    <Swatch token="line" value="ink / 7%" use="Dividers inside a surface" />
+    <Swatch token="selected" value="ink / 20%" use="The 1px selected stroke" />
+  </Grid>
+</Specimen>
+
+## Status
+
+Small doses: a 6px dot, a short colored word, or a /10 tint. Never a filled button.
+
+<Specimen>
+  <div className="flex flex-wrap gap-6 text-sm">
+    {['positive', 'caution', 'critical', 'info'].map((t) => (
+      <span key={t} className="flex items-center gap-2"><StatusDot tone={t} />{t}</span>
+    ))}
+  </div>
+</Specimen>
+
+## Orb palettes
+
+Each entity wears one ink/paper pair, picked from its id so it never changes.
+
+<Specimen>
+  <div className="flex flex-wrap items-end gap-8">
+    {Object.entries(ORB_PALETTES).map(([name, c]) => (
+      <div key={name} className="flex flex-col items-center gap-2">
+        <Orb palette={name} size={72} />
+        <span className="text-xs font-medium">{name}</span>
+        <span className="font-mono text-2xs text-ink-2">{c.ink} · {c.paper}</span>
+      </div>
+    ))}
+  </div>
+</Specimen>

@@ -1,0 +1,80 @@
+<link rel="icon" href="./brand/favicon/favicon.ico" sizes="any" />
+<!--
+  Docs pages typeset in the system itself: display headings at weight 400,
+  quiet sentence-case section heads, ink-2 prose, code as a muted pill —
+  never Storybook's bold, bordered defaults.
+-->
+<style>
+  #storybook-docs {
+    background: #fdfcfc;
+    padding-top: 48px;
+  }
+  #storybook-docs h1:not(.sb-unstyled *) {
+    font-weight: 400 !important;
+    font-size: 44px;
+    line-height: 48px;
+    letter-spacing: -0.03em;
+    color: #0a0a0a;
+  }
+  #storybook-docs h2:not(.sb-unstyled *) {
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 28px;
+    letter-spacing: -0.015em;
+    border: 0 !important;
+    margin-top: 40px;
+    color: #0a0a0a;
+  }
+  #storybook-docs h3:not(.sb-unstyled *) {
+    font-weight: 500;
+    font-size: 16px;
+  }
+  #storybook-docs p:not(.sb-unstyled *),
+  #storybook-docs li:not(.sb-unstyled *) {
+    color: #6b6a67;
+    font-size: 15px;
+    line-height: 24px;
+  }
+  #storybook-docs p:not(.sb-unstyled *) strong {
+    color: #0a0a0a;
+    font-weight: 500;
+  }
+  #storybook-docs code:not(pre code):not(.sb-unstyled *) {
+    background: #f2f1ef;
+    border: 0;
+    border-radius: 6px;
+    padding: 1px 6px;
+    font-family: 'Fragment Mono', ui-monospace, monospace;
+    font-size: 12px;
+    color: #0a0a0a;
+  }
+  /* Story frames: a white surface, no border — value, not lines */
+  #storybook-docs .docs-story {
+    border: 0;
+    box-shadow: none;
+    border-radius: 12px;
+    background: #ffffff;
+  }
+
+  /* Docs on phones: tighter gutters, a display H1 that fits, and prop
+     tables that scroll sideways instead of spilling off the screen. */
+  @media (max-width: 599px) {
+    #storybook-docs {
+      padding-top: 8px;
+    }
+    #storybook-docs .sbdocs-wrapper,
+    #storybook-docs > div > div {
+      padding-left: 16px !important;
+      padding-right: 16px !important;
+    }
+    #storybook-docs h1:not(.sb-unstyled *) {
+      font-size: 32px;
+      line-height: 36px;
+    }
+    #storybook-docs table:not(.sb-unstyled *) {
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+</style>

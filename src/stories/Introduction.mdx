@@ -1,0 +1,54 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Specimen, Grid } from './kit';
+import { Button } from '@/components/ui/button';
+import { Orb } from '@/components/ui/orb';
+
+<Meta title="Introduction" />
+
+<div className="sb-unstyled font-sans text-ink">
+  <div className="flex items-center gap-6">
+    <Orb palette="ember" size={96} animate />
+    <div>
+      <p className="font-mono text-xs tracking-[0.14em]">SRC</p>
+      <h1 className="mt-2 text-4xl">Design system</h1>
+      <p className="mt-2 max-w-xl text-md text-ink-2">
+        Every screen in Source, product and marketing, is built from what's in this book. The rules
+        live in <code className="font-mono text-sm">docs/09-design-system.md</code>; this is them, live.
+      </p>
+    </div>
+  </div>
+</div>
+
+<Specimen>
+  <Grid min={220}>
+    {[
+      ['Value, not lines', 'Surfaces separate by lightness. Cards sit a step lighter than the canvas, fields a step darker. Borders only divide rows inside a surface.'],
+      ['Grey interface, colorful content', 'Color lives in the orb, which gives each entity its identity, and in small status signals. Controls are never colored.'],
+      ['One black thing', 'Each view has at most one ink primary action. Everything else is white, grey, or ghost.'],
+      ['Shape says behavior', 'Pills are pressed. Soft rectangles are typed into. Rounded rectangles hold things.'],
+      ['Size and ink, not weight', 'Two weights, 400 and 500. Hierarchy comes from the type scale and three inks.'],
+      ['Selection is a thin stroke', 'The chosen thing gets a 1px gray stroke on a surface, never a heavy ink ring.'],
+    ].map(([title, body]) => (
+      <div key={title} className="rounded-card bg-surface p-5">
+        <p className="text-sm font-medium">{title}</p>
+        <p className="mt-1 text-sm text-ink-2">{body}</p>
+      </div>
+    ))}
+  </Grid>
+</Specimen>
+
+<div className="sb-unstyled font-sans text-ink">
+  <h2 className="mt-10 text-xl font-medium">Using this book</h2>
+  <ul className="mt-3 flex flex-col gap-2 text-sm text-ink-2">
+    <li><span className="font-medium text-ink">Surface</span>, in the toolbar, puts a story on the app canvas, inside a white card, or on the marketing sheet. A component is right only if it reads on every ground it lives on.</li>
+    <li><span className="font-medium text-ink">Viewport</span> presets match our breakpoints: phone 390, tablet 820, laptop 1280, desktop 1440.</li>
+    <li><span className="font-medium text-ink">Accessibility</span> checks run on every story, in the panel on the right.</li>
+    <li><span className="font-medium text-ink">Playground</span> puts the tokens and components on live dials (DialKit). Tune until it looks right, then press <span className="font-medium text-ink">Copy for Claude</span> in the panel for a ready-to-paste prompt: which file to change and only the values you moved. Tweaks are saved in this browser; <span className="font-medium text-ink">Reset to defaults</span> in the panel puts everything back.</li>
+    <li>Press <span className="font-mono text-xs">/</span> to search, <span className="font-mono text-xs">S</span> to hide the sidebar, and <span className="font-mono text-xs">A</span> to toggle the panel.</li>
+  </ul>
+  <div className="mt-6 flex gap-2">
+    <Button variant="primary" onClick={() => (window.parent.location.search = '?path=/docs/foundations-color--docs')}>Start with color</Button>
+    <Button onClick={() => (window.parent.location.search = '?path=/docs/components-button--docs')}>Jump to components</Button>
+    <Button onClick={() => (window.parent.location.search = '?path=/story/playground-tokens--tokens')}>Open the playground</Button>
+  </div>
+</div>

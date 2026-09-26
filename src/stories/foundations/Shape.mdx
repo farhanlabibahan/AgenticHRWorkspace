@@ -1,0 +1,32 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Specimen, Grid } from '../kit';
+
+<Meta title="Foundations/Shape & elevation" />
+
+# Shape & elevation
+
+Shape encodes behavior. **Pill**: pressed. **Field (8)**: typed into. **Card (12)**: holds things. **Dialog (16)** and **media (24)** for the largest containers.
+
+<Specimen>
+  <Grid min={140}>
+    {[['full', 'rounded-full', 'Buttons, chips, badges'], ['box · 5', 'rounded-box', 'Checkbox'], ['field · 8', 'rounded-field', 'Inputs'], ['card · 12', 'rounded-card', 'Cards, panels'], ['dialog · 16', 'rounded-dialog', 'Dialogs, sheets'], ['media · 24', 'rounded-media', 'Hero media']].map(([name, cls, use]) => (
+      <div key={name}>
+        <div className={`h-16 bg-surface ${cls}`} />
+        <p className="mt-2 text-sm font-medium">{name}</p>
+        <p className="text-xs text-ink-2">{use}</p>
+      </div>
+    ))}
+  </Grid>
+</Specimen>
+
+## Elevation
+
+Three levels. Only floating things cast a shadow.
+
+<Specimen>
+  <Grid min={200}>
+    <div><div className="h-24 rounded-card bg-canvas shadow-[inset_0_0_0_1px_var(--color-line)]" /><p className="mt-2 text-sm font-medium">Flat</p><p className="text-xs text-ink-2">The canvas</p></div>
+    <div><div className="h-24 rounded-card bg-surface" /><p className="mt-2 text-sm font-medium">Raised</p><p className="text-xs text-ink-2">A surface — no border, no shadow</p></div>
+    <div><div className="h-24 rounded-card bg-surface shadow-float" /><p className="mt-2 text-sm font-medium">Floating</p><p className="text-xs text-ink-2">Menus, dialogs, the nav pill</p></div>
+  </Grid>
+</Specimen>

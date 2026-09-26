@@ -1,0 +1,35 @@
+# The contributor license agreement (CLA.md): a first pull request from
+# someone new gets a comment asking them to sign by replying with one
+# sentence. Signatures are kept on the cla-signatures branch. The action
+# never checks out or runs the pull request's code, so pull_request_target
+# is safe here.
+name: CLA
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_target:
+    types: [opened, closed, synchronize]
+
+permissions:
+  actions: write
+  contents: write
+  pull-requests: write
+  statuses: write
+
+jobs:
+  cla:
+    # Only in the public repository, where outside contributors open pull
+    # requests; the private one we work in has no signatures branch.
+    if: github.event.repository.private == false
+    runs-on: ubuntu-latest
+    steps:
+      - if: github.event_name == 'pull_request_target' || github.event.comment.body == 'recheck' || github.event.comment.body == 'I have read the CLA Document and I hereby sign the CLA'
+        uses: contributor-assistant/github-action@v2.6.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          path-to-signatures: signatures/version1/cla.json
+          path-to-document: ${{ github.server_url }}/${{ github.repository }}/blob/main/CLA.md
+          branch: cla-signatures
+          allowlist: adamperlis,dependabot[bot],renovate[bot]

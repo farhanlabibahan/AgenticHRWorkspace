@@ -1,0 +1,38 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Specimen, Row } from '../kit';
+
+<Meta title="Foundations/Typography" />
+
+# Typography
+
+Geist for everything; Fragment Mono only for machine values. Two bands: fine steps (11–20) for dense UI, large steps (24–72) for display. Every line height sits on the 4px grid. Two weights. Sentence case, always.
+
+<Specimen ground="surface">
+  {[
+    ['6xl', 'text-6xl', '72 / 72 · 400 · −0.04em'],
+    ['5xl', 'text-5xl', '56 / 60 · 400 · −0.035em'],
+    ['4xl', 'text-4xl', '44 / 48 · 400 · −0.03em'],
+    ['3xl', 'text-3xl', '32 / 36 · 400 · −0.025em'],
+    ['2xl', 'text-2xl', '24 / 32 · 400 · −0.02em'],
+    ['xl', 'text-xl font-medium', '20 / 28 · 500 — page titles'],
+    ['lg', 'text-lg font-medium', '18 / 24 · 500 — panel titles'],
+    ['md', 'text-md', '16 / 24 · 400 — lead, card titles'],
+    ['base', 'text-base', '14 / 20 · 400 — body'],
+    ['sm', 'text-sm', '13 / 20 · 400 — buttons, lists, labels'],
+    ['xs', 'text-xs', '12 / 16 · 400 — meta, badges'],
+    ['2xs', 'text-2xs', '11 / 16 · 400 — captions'],
+  ].map(([name, cls, spec]) => (
+    <Row key={name} label={name} spec={spec}>
+      <span className={`${cls} truncate`}>The ATS built for the age of AI</span>
+    </Row>
+  ))}
+</Specimen>
+
+## Inks
+
+<Specimen ground="surface">
+  <p className="text-md text-ink">ink — primary text</p>
+  <p className="text-md text-ink-2">ink-2 — secondary text, meta</p>
+  <p className="text-md text-ink-3">ink-3 — placeholder and decoration</p>
+  <p className="mt-4 font-mono text-sm">Fragment Mono — sk_live_7Hk2… /api/v1/transcripts</p>
+</Specimen>

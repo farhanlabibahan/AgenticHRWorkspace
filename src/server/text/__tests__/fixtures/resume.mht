@@ -1,0 +1,27 @@
+MIME-Version: 1.0
+Content-Type: multipart/related; boundary="----=_NextPart_01DB0000.00000000"
+
+This document is a Single File Web Page, also known as a Web Archive file.
+
+------=_NextPart_01DB0000.00000000
+Content-Location: file:///C:/D0000000/resume.htm
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/html; charset="windows-1252"
+
+<html xmlns:o="urn:schemas-microsoft-com:office:office"><head><meta http-e=
+quiv=3DContent-Type content=3D"text/html; charset=3Dwindows-1252"><!--[if =
+gte mso 9]><xml><o:DocumentProperties><o:Author>Private author</o:Author><=
+/o:DocumentProperties></xml><![endif]--></head><body lang=3DEN-US><div cla=
+ss=3DWordSection1><p class=3DMsoTitle>Rowan Q. Testperson</p><p class=3DMs=
+oNormal>Staff engineer =B7 r=E9sum=E9 =96 <a href=3D"https://www.linkedin.=
+com/in/rowan-testperson">LinkedIn</a></p><p class=3DMsoNormal>rowan.testpe=
+rson@example.test</p></div></body></html>
+
+------=_NextPart_01DB0000.00000000
+Content-Location: file:///C:/D0000000/resume_files/image001.png
+Content-Transfer-Encoding: base64
+Content-Type: image/png
+
+bm90IHJlYWxseSBhIHBpY3R1cmU=
+
+------=_NextPart_01DB0000.00000000--

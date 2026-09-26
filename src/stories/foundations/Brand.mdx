@@ -1,0 +1,111 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Specimen, Row } from '../kit';
+
+<Meta title="Foundations/Brand" />
+
+export const px = { imageRendering: 'pixelated' };
+
+export function Asset({ file, height, small, wide = false, dark = false, note }) {
+  // Whole multiples only: a box narrower than the image squeezes it and the
+  // cells come out uneven. `small` is the height under 640px; `wide` spans
+  // both columns.
+  return (
+    <figure className={`flex flex-col gap-2 ${wide ? 'md:col-span-2' : ''}`}>
+      <div className={`flex flex-1 items-center justify-center rounded-card p-6 ${dark ? 'bg-[#0f0f0e]' : 'bg-surface'}`}>
+        <img
+          src={`./brand/${file}`}
+          alt=""
+          className="h-(--h-sm) sm:h-(--h)"
+          style={{ '--h': `${height}px`, '--h-sm': `${small ?? height}px`, ...px }}
+        />
+      </div>
+      <figcaption className="font-mono text-xs text-ink-2">
+        <a href={`./brand/${file}`} download className="hover:text-ink">
+          {file}
+        </a>
+        {note ? <span> · {note}</span> : null}
+      </figcaption>
+    </figure>
+  );
+}
+
+export function Icon({ file, size, zoom = 1, label }) {
+  return (
+    <figure className="flex flex-col items-start gap-2 self-end">
+      <img src={`./brand/favicon/${file}`} alt="" width={size * zoom} height={size * zoom} style={px} />
+      <figcaption className="font-mono text-xs text-ink-2">
+        <a href={`./brand/favicon/${file}`} download className="hover:text-ink">
+          {label ?? file}
+        </a>
+      </figcaption>
+    </figure>
+  );
+}
+
+# Brand
+
+The logo is the orb and the word **Source**. The orb is the app's own ember orb, the one on the homepage (`<Orb palette="ember" />`): a lit dome dithered to two tones, ink `#3A1A12` and paper `#F2A58F`, through an 8×8 Bayer matrix. The word is Geist Medium, converted to outlines, so no file needs a font installed.
+
+Every file lives in `public/brand/` and is served from `/brand/…`. Click a file name to download it. `public/brand/README.md` has the full file list and how to regenerate it all from `scripts/brand/`.
+
+## Lockup
+
+Use `-light` (ink text) on the canvas or white, and `-dark` on the dark canvas or anything darker than mid-grey. Each comes as SVG and as PNG at 1×, 2× and 4×.
+
+<Specimen>
+  <div className="grid gap-4 md:grid-cols-2">
+    <Asset file="source-lockup-light.svg" height={64} note="shown at 2×" />
+    <Asset file="source-lockup-dark.svg" height={64} dark note="shown at 2×" />
+    <Asset file="source-lockup-large-light.svg" height={128} small={64} wide note="64-cell orb, for anything over ~128px" />
+    <Asset file="source-lockup-large-dark.svg" height={128} small={64} wide dark note="64-cell orb" />
+  </div>
+</Specimen>
+
+## Wordmark and mark
+
+<Specimen>
+  <div className="grid gap-4 md:grid-cols-2">
+    <Asset file="source-wordmark-light.svg" height={32} />
+    <Asset file="source-wordmark-dark.svg" height={32} dark />
+    <Asset file="source-mark.svg" height={64} note="32 cells" />
+    <Asset file="source-mark-large.svg" height={128} note="64 cells" />
+  </div>
+</Specimen>
+
+The mark has no light and dark versions: the orb carries its own two colors and looks the same on both, as it does in the app.
+
+## Favicons
+
+`SRC` in Fragment Mono across the orb, with the dither cleared around each letter. It's only for icons; everywhere else, the sidebar included, the logo is the lockup. Each size is drawn on its own grid, one pixel per cell, never shrunk from a bigger image.
+
+<Specimen>
+  <Row label="At real size" spec="1×">
+    <Icon file="favicon-16.png" size={16} />
+    <Icon file="favicon-32.png" size={32} />
+    <Icon file="favicon-48.png" size={48} />
+    <Icon file="favicon-96.png" size={96} />
+  </Row>
+  <Row label="Magnified" spec="8×, nearest neighbour">
+    <Icon file="favicon-16.png" size={16} zoom={8} label="favicon-16.png · 8×" />
+    <Icon file="favicon-32.png" size={32} zoom={4} label="favicon-32.png · 4×" />
+  </Row>
+  <Row label="Home screen" spec="iOS 180 · PWA 192/512 · maskable">
+    <Icon file="apple-touch-icon.png" size={90} label="apple-touch-icon.png (180)" />
+    <Icon file="icon-192.png" size={96} label="icon-192.png" />
+    <Icon file="icon-512.png" size={128} label="icon-512.png" />
+    <Icon file="icon-512-maskable.png" size={128} label="icon-512-maskable.png" />
+  </Row>
+  <Row label="Bundles" spec="ico · svg">
+    <Icon file="favicon.ico" size={32} label="favicon.ico (16, 32, 48)" />
+    <Icon file="icon.svg" size={32} label="icon.svg" />
+  </Row>
+</Specimen>
+
+In the app, `src/app/favicon.ico` is the only `rel="icon"`, on purpose. Given an SVG or a 32px PNG as well, Chrome prefers it and scales it down for 1× tabs, which averages the dither to mush. With the ICO alone, Chrome shows the 16px and 32px frames pixel for pixel.
+
+## Using it
+
+- **Clear space.** Keep half the orb's diameter clear around the lockup and the mark. For the wordmark alone, keep the height of its capital S clear.
+- **Minimum size.** The lockup and the mark at 32px, the wordmark at 16px tall. Anything smaller gets the favicon.
+- **Whole pixels.** The orb is a grid of square cells: use 32, 64, 96 or 128px for the standard files and 64, 128, 192 or 256px for `-large`, or the cells come out uneven.
+- **Don't** recolor the orb, smooth or blur the dither, set "Source" in another weight or font, or rearrange the mark and the word.

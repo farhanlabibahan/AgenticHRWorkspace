@@ -1,0 +1,14 @@
+# Secret scanning (gitleaks). The default rules, minus test fixtures: the
+# importer and notetaker tests use made-up keys against mocked HTTP, and a
+# doc comment shows curl's -u flag. Checked 2026-09-26: none of the flagged
+# fixture values exists anywhere real.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "test fixtures and doc examples"
+paths = [
+  '''(^|/)__tests__/''',
+  '''^tests/''',
+  '''^scripts/import-greenhouse\.mjs$''',
+]

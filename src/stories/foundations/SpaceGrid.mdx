@@ -1,0 +1,36 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Specimen, Row } from '../kit';
+import { Button } from '@/components/ui/button';
+import { Chip } from '@/components/ui/primitives';
+import { inputClass } from '@/components/form-controls';
+
+<Meta title="Foundations/Space & grid" />
+
+# Space & grid
+
+A 4px base. The steps in use: 4 · 8 · 12 · 16 · 20 · 24 · 32 · 48 · 64 · 96.
+
+<Specimen ground="surface">
+  {[[4, 'Label → value'], [8, 'Items in a group'], [12, 'Cards in a grid'], [16, 'Blocks in a section'], [32, 'Sections of a page'], [96, 'Marketing bands']].map(([px, use]) => (
+    <Row key={px} label={`${px}px`} spec={use}>
+      <span className="h-3 rounded-full bg-ink" style={{ width: px }} />
+    </Row>
+  ))}
+</Specimen>
+
+## Components share heights
+
+A control's height is its line height plus padding, so a button, field, and chip in one toolbar line up exactly.
+
+<Specimen>
+  <Row label="md · 36" spec="App default">
+    <input className={`${inputClass} max-w-64`} placeholder="Search name, role…" />
+    <Button>Filter</Button>
+    <Button variant="primary">Add candidate</Button>
+  </Row>
+  <Row label="sm · 32" spec="Chips and filters">
+    <Chip selected>All stages</Chip>
+    <Chip>Phone screen</Chip>
+    <Button size="sm">See more</Button>
+  </Row>
+</Specimen>

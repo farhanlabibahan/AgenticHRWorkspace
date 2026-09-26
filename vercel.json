@@ -1,0 +1,40 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/emails",
+      "schedule": "*/10 * * * *"
+    },
+    {
+      "path": "/api/cron/resume-parse",
+      "schedule": "*/10 * * * *"
+    },
+    {
+      "path": "/api/cron/webhooks",
+      "schedule": "*/10 * * * *"
+    },
+    {
+      "path": "/api/cron/retention",
+      "schedule": "15 3 * * *"
+    },
+    {
+      "path": "/api/cron/imports",
+      "schedule": "*/10 * * * *"
+    },
+    {
+      "path": "/api/cron/resume-text",
+      "schedule": "*/10 * * * *"
+    },
+    {
+      "path": "/api/cron/ocr",
+      "schedule": "*/10 * * * *"
+    },
+    {
+      "path": "/api/cron/transcripts",
+      "schedule": "*/10 * * * *"
+    },
+    {
+      "path": "/api/cron/newsletters",
+      "schedule": "*/10 * * * *"
+    }
+  ]
+}
