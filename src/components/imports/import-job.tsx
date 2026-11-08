@@ -116,7 +116,7 @@ export function ImportJob({ initial }: { initial: ImportJobView }) {
   const [canceling, startCancel] = useTransition();
   const [cancelError, setCancelError] = useState<string | null>(null);
   const cancel = () => {
-    if (!window.confirm(`Cancel this import? Anything already imported from ${job.providerName} stays in Source.`)) return;
+    if (!window.confirm(`Cancel this import? Anything already imported from ${job.providerName} stays in Orqestra.`)) return;
     startCancel(async () => {
       const res = await cancelImportAction(job.id);
       if (res.error) {
@@ -225,7 +225,7 @@ function StatusNote({ job, cancelError }: { job: ImportJobView; cancelError: str
                 ? `Brought over ${formatCount(contacts)} ${contacts === 1 ? 'candidate' : 'candidates'} and ${formatCount(applications)} ${applications === 1 ? 'application' : 'applications'} from ${job.providerName}.`
                 : updated
                   ? `Nothing new to add from ${job.providerName}, and ${formatCount(updated)} ${updated === 1 ? 'record' : 'records'} that changed there ${updated === 1 ? 'is' : 'are'} up to date.`
-                  : `Nothing new to bring over from ${job.providerName}. Everything was already in Source.`}
+                  : `Nothing new to bring over from ${job.providerName}. Everything was already in Orqestra.`}
               {(contacts || applications) && updated
                 ? ` ${formatCount(updated)} ${updated === 1 ? 'record' : 'records'} imported before ${updated === 1 ? 'was' : 'were'} updated.`
                 : null}
@@ -248,7 +248,7 @@ function StatusNote({ job, cancelError }: { job: ImportJobView; cancelError: str
           <p className="text-md font-medium text-critical">The import stopped</p>
           {job.error ? <p className="mt-1 break-words text-sm text-ink">{job.error}</p> : null}
           <p className="mt-3 max-w-prose text-sm text-ink-2">
-            Everything imported before this stays in Source. Fix the problem and start a new import. It skips
+            Everything imported before this stays in Orqestra. Fix the problem and start a new import. It skips
             what&apos;s already here and picks up the rest.
           </p>
           <Link href="/settings/import" className={buttonClass({ variant: 'secondary', className: 'mt-4' })}>
@@ -259,7 +259,7 @@ function StatusNote({ job, cancelError }: { job: ImportJobView; cancelError: str
 
       {job.status === 'CANCELED' ? (
         <p className="max-w-prose text-sm text-ink-2">
-          This import was canceled. Anything imported before then stays in Source, and a new import skips it.
+          This import was canceled. Anything imported before then stays in Orqestra, and a new import skips it.
         </p>
       ) : null}
     </div>
@@ -488,7 +488,7 @@ function MappingReview({
   return (
     <div className="flex flex-col gap-8">
       <p className="max-w-prose text-sm text-ink">
-        Stages from {job.providerName} are grouped by name. Choose where each one lands in Source. Nothing is
+        Stages from {job.providerName} are grouped by name. Choose where each one lands in Orqestra. Nothing is
         imported until you start.
       </p>
 
@@ -578,7 +578,7 @@ function MappingReview({
         {starters.length ? (
           <Card className="mt-3 flex items-start justify-between gap-6 px-4 py-4">
             <div>
-              <p className="text-sm text-ink">Use {job.providerName}&apos;s pipeline in place of Source&apos;s starter stages</p>
+              <p className="text-sm text-ink">Use {job.providerName}&apos;s pipeline in place of Orqestra&apos;s starter stages</p>
               <p className="mt-1 text-sm text-ink-2">
                 {replaceStarters
                   ? `Removes ${listNames(starters.map((st) => st.name))}, which no ${job.providerName} stage lands in. You can add stages back any time in Settings.`
@@ -588,7 +588,7 @@ function MappingReview({
             <Switch
               checked={replaceStarters}
               onChange={setReplaceStarters}
-              label={`Use ${job.providerName}'s pipeline in place of Source's starter stages`}
+              label={`Use ${job.providerName}'s pipeline in place of Orqestra's starter stages`}
             />
           </Card>
         ) : null}
@@ -696,7 +696,7 @@ function MappingReview({
                   <p className="mt-3 text-xs text-ink-2">
                     Not matched: {users.unmatchedNames.slice(0, 8).join(', ')}
                     {users.total - users.matched > 8 ? `, and ${formatCount(users.total - users.matched - 8)} more` : ''}.
-                    Invite them to Source first if you want their work credited to them.
+                    Invite them to Orqestra first if you want their work credited to them.
                   </p>
                 ) : null}
               </>

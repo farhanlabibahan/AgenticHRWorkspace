@@ -4,7 +4,7 @@ import { PageSkeleton } from '@/components/page-skeleton';
 import { firstParams, type SearchParams } from '@/lib/utils';
 import { PostingsScreen } from './screen';
 
-export const metadata = { title: 'Postings — Source' };
+export const metadata = { title: 'Postings — Orqestra' };
 
 async function PostingsContent({ searchParams }: { searchParams: SearchParams }) {
   return <PostingsScreen data={await loadPostingsPage(await firstParams(searchParams))} />;

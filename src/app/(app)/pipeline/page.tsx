@@ -4,7 +4,7 @@ import { PageSkeleton } from '@/components/page-skeleton';
 import { firstParams, type SearchParams } from '@/lib/utils';
 import { PipelineScreen } from './screen';
 
-export const metadata = { title: 'Pipeline — Source' };
+export const metadata = { title: 'Pipeline — Orqestra' };
 
 async function PipelineContent({ searchParams }: { searchParams: SearchParams }) {
   return <PipelineScreen data={await loadPipelinePage(await firstParams(searchParams))} />;

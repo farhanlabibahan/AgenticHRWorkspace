@@ -516,7 +516,7 @@ function money(n: unknown): number | null {
 
 const PAY_PERIOD: Record<string, string> = { HOURLY: 'hour', DAILY: 'day', WEEKLY: 'week', MONTHLY: 'month' };
 
-/** Source stores annual pay: yearly (or no period) passes through, monthly is ×12, shorter periods have no annual figure. */
+/** Orqestra stores annual pay: yearly (or no period) passes through, monthly is ×12, shorter periods have no annual figure. */
 function annualPay(j: SrJob): { min: number | null; max: number | null; currency: string | null } {
   const comp = j.compensation;
   const factor = !comp?.period || comp.period === 'YEARLY' ? 1 : comp.period === 'MONTHLY' ? 12 : null;
@@ -623,7 +623,7 @@ function putField(fields: Record<string, string>, label: string, value: string) 
 
 // ---------- Feedback ----------
 
-/** overallRating is 1–5 stars. 3 is neutral; with no neutral in Source it reads as "no", and the raw score is kept. */
+/** overallRating is 1–5 stars. 3 is neutral; with no neutral in Orqestra it reads as "no", and the raw score is kept. */
 const RATING: Record<number, 1 | 2 | 3 | 4> = { 1: 1, 2: 2, 3: 2, 4: 3, 5: 4 };
 
 // ---------- Offers ----------
@@ -753,7 +753,7 @@ export const smartrecruitersProvider: ProviderModule = {
       return name;
     }
 
-    /** The original author's name, needed only when they aren't a teammate in Source (for the byline). */
+    /** The original author's name, needed only when they aren't a teammate in Orqestra (for the byline). */
     async function authorName(ctx: PhaseContext, id: string | null): Promise<string | null> {
       if (!id || (await ctx.load.has('user', id))) return null;
       return lookupUser(ctx, id);
@@ -811,7 +811,7 @@ export const smartrecruitersProvider: ProviderModule = {
       return { ...(next as PageCursor), seen: [...seen].slice(-SEEN_WINDOW) };
     }
 
-    /** Job ids of this candidate's applications that made it into Source. */
+    /** Job ids of this candidate's applications that made it into Orqestra. */
     async function importedJobs(ctx: PhaseContext, row: SrCandidateRow): Promise<string[]> {
       const out: string[] = [];
       for (const jobId of rowJobIds(row)) if (await ctx.load.has('opportunity', appKey(String(row.id), jobId))) out.push(jobId);
@@ -1032,7 +1032,7 @@ export const smartrecruitersProvider: ProviderModule = {
       const author = m.authorId ? String(m.authorId) : null;
       const apps = m.context?.applications ?? [];
       const onApp = apps.length === 1 && apps[0].jobId ? appKey(candidateId, String(apps[0].jobId)) : null;
-      // Source has no private notes; say so rather than silently widening who can read it.
+      // Orqestra has no private notes; say so rather than silently widening who can read it.
       const marker =
         m.visibility === 'PRIVATE' ? '(Private in SmartRecruiters) ' : m.visibility === 'DIRECT' ? '(Direct message in SmartRecruiters) ' : '';
       await ctx.load.note({
@@ -1392,7 +1392,7 @@ export const smartrecruitersProvider: ProviderModule = {
                       rating,
                       title: raw === 3 ? 'Original rating: 3/5 (neutral)' : null,
                       summary: r.comment?.trim() ?? '',
-                      // Keep the vendor's own score; Source's 4-point scale can't hold a 5-star one exactly.
+                      // Keep the vendor's own score; Orqestra's 4-point scale can't hold a 5-star one exactly.
                       answers: raw != null && raw !== 0 ? [{ label: 'SmartRecruiters rating', value: `${raw}/5` }] : [],
                       createdAt: toDate(r.createdOn),
                     });

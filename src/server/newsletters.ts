@@ -136,7 +136,7 @@ export function contentFor(n: NonNullable<Sendable>, baseUrl: string, contactId:
 
 /** EMAIL_FROM's address, shown as the organization. */
 function fromFor(orgName: string): string {
-  const configured = process.env.EMAIL_FROM ?? 'Source <no-reply@source.local>';
+  const configured = process.env.EMAIL_FROM ?? 'Orqestra <no-reply@orqestra.local>';
   const address = configured.match(/<([^>]+)>/)?.[1] ?? configured.trim();
   return `"${orgName.replace(/["\\\r\n]/g, '').slice(0, 80)}" <${address}>`;
 }

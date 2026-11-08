@@ -3,7 +3,7 @@ import { loadTasksPage } from '@/app/(app)/page-loaders';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { TasksScreen } from './screen';
 
-export const metadata = { title: 'Tasks — Source' };
+export const metadata = { title: 'Tasks — Orqestra' };
 
 async function TasksContent() {
   return <TasksScreen data={await loadTasksPage()} />;

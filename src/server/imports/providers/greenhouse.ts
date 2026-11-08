@@ -67,7 +67,7 @@ import type {
  *   soft-deleted posts. Job templates are skipped. Neither requisition ids
  *   nor rejection-reason names are unique, so repeats are told apart before
  *   the engine would merge them.
- * - Notes Greenhouse shows only to admins are skipped (Source notes have no
+ * - Notes Greenhouse shows only to admins are skipped (Orqestra notes have no
  *   private setting); private notes and private scorecard notes come across
  *   labelled as such.
  * - Offers are versioned (current_only=true), carry pay only in custom
@@ -108,7 +108,7 @@ const NOTE_TYPES: Record<string, string | null> = {
 };
 const OFFER_DOCUMENTS = new Set(['offer_packet', 'offer_letter', 'signed_offer_letter']);
 const ADMIN_ONLY_SKIPPED =
-  'Skipped Greenhouse notes visible only to admins: Source notes have no private setting, so anyone who can see the candidate would read them';
+  'Skipped Greenhouse notes visible only to admins: Orqestra notes have no private setting, so anyone who can see the candidate would read them';
 
 /** Focus-attribute ratings, which (unlike the overall scorecard rating) use definitely_not and mixed. */
 const ATTRIBUTE_RATINGS: Record<string, string> = {
@@ -1623,7 +1623,7 @@ export const greenhouseProvider: ProviderModule = {
               Object.assign(fields, Object.fromEntries(fieldTexts(person?.custom_fields, 'Candidate · ')));
               if (status === 'converted') fields['Greenhouse status'] = 'Prospect converted to a candidate';
               const origin = originOf(app, source);
-              // Referral credit (bonuses, reports) has no field in Source; keep who it went to.
+              // Referral credit (bonuses, reports) has no field in Orqestra; keep who it went to.
               if (referrer?.name?.trim()) fields[origin === 'REFERRED' ? 'Referred by' : 'Credited to'] = referrer.name.trim();
 
               await ctx.load.application({
@@ -1783,7 +1783,7 @@ export const greenhouseProvider: ProviderModule = {
                   ? await ctx.load.has('opportunity', String(n.application_id))
                   : await ctx.load.has('contact', String(n.candidate_id));
               if (!parent) return;
-              // Source notes have no private setting, and these were for admins' eyes only.
+              // Orqestra notes have no private setting, and these were for admins' eyes only.
               if (n.visibility === 'admin_only_visible') return ctx.warn(ADMIN_ONLY_SKIPPED, { entity: 'note' });
               await ctx.load.note({
                 externalId: id,

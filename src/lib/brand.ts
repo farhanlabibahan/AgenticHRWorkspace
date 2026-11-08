@@ -2,7 +2,7 @@
  * An organization's brand kit (Organization.brand): a font, a text size, a
  * brand color and a background, applied to what candidates see (the job
  * board, the application form and emails to candidates). The logo is the
- * organization's logo. Everything is optional; unset means Source's own
+ * organization's logo. Everything is optional; unset means Orqestra's own
  * look. Read defensively: the column is JSON.
  *
  * Only the brand color and the background are chosen. Every other shade
@@ -94,7 +94,7 @@ const PAPER = '#ffffff';
 export const textOn = (hex: string) => (contrast(hex, INK) >= contrast(hex, PAPER) ? INK : PAPER);
 
 /**
- * The whole palette, derived from the background. Text is Source's usual
+ * The whole palette, derived from the background. Text is Orqestra's usual
  * near-black or off-white; on a mid-tone background where that falls short
  * of 4.5:1, it's pure black or white, and one of them always reaches it.
  */

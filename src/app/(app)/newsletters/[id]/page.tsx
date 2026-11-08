@@ -10,7 +10,7 @@ import { NewsletterEditor } from '@/components/newsletter-editor';
 import { RefreshWhileSending } from '@/components/newsletter-progress';
 import { canSendNewsletters, countAudience, previewNewsletter } from '@/server/newsletters';
 
-export const metadata = { title: 'Newsletter — Source' };
+export const metadata = { title: 'Newsletter — Orqestra' };
 
 export default async function NewsletterPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

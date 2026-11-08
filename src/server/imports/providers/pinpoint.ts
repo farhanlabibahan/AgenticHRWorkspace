@@ -42,7 +42,7 @@ import type {
  *   dropped, so rows that shift between requests aren't handled twice.
  * - Stages are per-job copies with a `basic_type` (applied, review, interview,
  *   offer, hired, rejected). Discovery groups them by name. "Rejected" is not a
- *   pipeline position in Source, only an outcome, so it is never mapped: a
+ *   pipeline position in Orqestra, only an outcome, so it is never mapped: a
  *   rejected application sits at the furthest stage it reached.
  * - Outcome: a hired or rejected stage decides it, and otherwise hired_at or
  *   rejected_at does. A hire can leave the application in its offer stage
@@ -60,7 +60,7 @@ import type {
  *   currency of its own takes the linked job's pay currency, or is left out.
  * - Scorecards and offers have no list endpoint. Both come from one second pass
  *   over /applications with sparse fields and includes. Scorecards rate
- *   metrics 1–5 with no overall decision, so the mean maps onto Source's 1–4
+ *   metrics 1–5 with no overall decision, so the mean maps onto Orqestra's 1–4
  *   scale (≥4.5 strong yes, ≥3.5 yes, ≥2 no, else strong no). The AI sentiment
  *   is the fallback, and a scorecard with neither comes in as a note. Nothing
  *   links a scorecard to an interview.
@@ -79,7 +79,7 @@ import type {
  * - Demo applications, and candidates whose only applications are demos, are
  *   skipped. Blind-screened (`concealed`) application snapshots never build a
  *   contact: the candidate record is sideloaded instead. national_identifier
- *   and date_of_birth are never copied into Source.
+ *   and date_of_birth are never copied into Orqestra.
  * - Talent-pipeline (JobSeeker) comments reach their person through
  *   /job_seekers. Interviews on job seekers have no application to land on.
  */
@@ -314,7 +314,7 @@ function num(v: unknown): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
-/** A whole number that fits Source's integer columns, else null. */
+/** A whole number that fits Orqestra's integer columns, else null. */
 function int(n: number | null | undefined): number | null {
   if (n == null || !Number.isFinite(n)) return null;
   const r = Math.round(n);
@@ -496,7 +496,7 @@ function budget(details: RequisitionDetailAttrs[]) {
 
 /**
  * Requisition budget. Without a currency (from the details, else the linked
- * job's pay currency) the amounts are left out: Source would store them as dollars.
+ * job's pay currency) the amounts are left out: Orqestra would store them as dollars.
  */
 export function pinpointRequisitionSalary(details: RequisitionDetailAttrs[], jobCurrency?: string | null) {
   const b = budget(details);
@@ -707,7 +707,7 @@ export function createPinpointProvider(pageSizes: Partial<PinpointPageSizes> = {
         // The tenant host serves the API and attachment blobs, and older blob
         // links use the apex. Storage redirects leave Pinpoint and go without the key.
         hosts: ['pinpointhq.com', HOST_SUFFIX],
-        headers: { ...(key ? { 'X-API-KEY': key } : {}), 'x-vendor-name': 'source-ats' },
+        headers: { ...(key ? { 'X-API-KEY': key } : {}), 'x-vendor-name': 'orqestra' },
       };
     },
 
@@ -935,7 +935,7 @@ export function createPinpointProvider(pageSizes: Partial<PinpointPageSizes> = {
         const loc = related<NameAttrs>(inc, job, 'location')[0];
         const postings = related<JobPostingAttrs>(inc, job, 'job_postings');
         const fallback = postings.find((p) => attrs(p).default_for_job) ?? postings[0];
-        // Salaries in Source are annual; keep hourly/daily pay as text instead.
+        // Salaries in Orqestra are annual; keep hourly/daily pay as text instead.
         const annual = !a.compensation_frequency || a.compensation_frequency === 'year';
         const description = [
           jobDescription(a) || htmlToText(attrs(fallback).description),

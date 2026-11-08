@@ -2,7 +2,7 @@ import { createHash } from 'crypto';
 
 /**
  * Re-imports: a second import from the same account updates what changed at
- * the vendor since the last one, and never what the team changed in Source.
+ * the vendor since the last one, and never what the team changed in Orqestra.
  *
  * Every ImportRef keeps the Source values its record was mapped to at the
  * last import (the snapshot). On the next import each field is a three-way

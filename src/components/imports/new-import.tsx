@@ -146,8 +146,8 @@ function ConnectForm({
     ...(reimport
       ? [
           meta.updatesOnReimport
-            ? `You've imported from ${meta.name} before. This adds anyone new and updates candidates, applications, notes and jobs that changed in ${meta.name} since. Changes your team made in Source stay, and nothing is deleted.`
-            : `You've imported from ${meta.name} before. This adds anyone new; records already imported stay as they are in Source.`,
+            ? `You've imported from ${meta.name} before. This adds anyone new and updates candidates, applications, notes and jobs that changed in ${meta.name} since. Changes your team made in Orqestra stay, and nothing is deleted.`
+            : `You've imported from ${meta.name} before. This adds anyone new; records already imported stay as they are in Orqestra.`,
         ]
       : []),
     ...(retentionMonths

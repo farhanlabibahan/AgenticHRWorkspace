@@ -37,7 +37,7 @@ import { extractText, textFields } from '@/server/text';
  * Re-imports: a record that already has a ref is updated from the vendor,
  * not skipped. Unchanged records (same fingerprint) cost no write; changed
  * ones get a three-way merge against what the last import wrote, so the
- * vendor's changes land and the team's edits in Source stay (resync.ts).
+ * vendor's changes land and the team's edits in Orqestra stay (resync.ts).
  * Nothing is deleted when it disappears at the vendor.
  *
  * Writes go straight to Prisma rather than through the app's services on
@@ -97,7 +97,7 @@ export function safeMime(declared: string | null | undefined, filename: string):
   return MIME_BY_EXT[path.extname(filename).toLowerCase()] ?? 'application/octet-stream';
 }
 
-/** Source's numeric columns are 32-bit ints. */
+/** Orqestra's numeric columns are 32-bit ints. */
 function int32(n: number | null | undefined): number | null {
   if (n == null || !Number.isFinite(n)) return null;
   return Math.max(-2_147_483_648, Math.min(2_147_483_647, Math.round(n)));
@@ -241,7 +241,7 @@ export function createLoader(deps: LoaderDeps): Loader {
    * vendor record costs nothing; a changed one is merged field by field
    * against the snapshot. A ref from before re-imports has no snapshot, and
    * `legacy` says what stands in for it: the record as it is now ('ours',
-   * for records nobody edits in Source), the same only if nothing has
+   * for records nobody edits in Orqestra), the same only if nothing has
    * updated it since the import did ('untouched'), or nothing ('unknown':
    * fields are only filled when empty).
    */
@@ -263,7 +263,7 @@ export function createLoader(deps: LoaderDeps): Loader {
       return bump(`unchanged.${kind}`);
     }
     const current = await io.read();
-    // Deleted or erased in Source since the last import: a tombstone.
+    // Deleted or erased in Orqestra since the last import: a tombstone.
     if (!current) return bump(`${kind}.gone`);
     let base = prior.snapshot as Partial<T> | null;
     if (!base && (io.legacy === 'ours' || (io.legacy === 'untouched' && prior.created && untouchedSince(current.updatedAt, prior.createdAt)))) {
@@ -398,7 +398,7 @@ export function createLoader(deps: LoaderDeps): Loader {
 
   const alive = new Map<string, boolean>();
 
-  /** A ref's target may have been deleted in Source since; link to it only if it's still there. */
+  /** A ref's target may have been deleted in Orqestra since; link to it only if it's still there. */
   async function existing(kind: 'posting' | 'requisition', id: string | null): Promise<string | null> {
     if (!id) return null;
     const key = `${kind}:${id}`;
@@ -474,7 +474,7 @@ export function createLoader(deps: LoaderDeps): Loader {
       name: clip(c.name.trim() || 'Unknown candidate', 200),
       headline: c.headline ? clip(c.headline, 300) : null,
       location: c.location ? clip(c.location, 200) : null,
-      // Source stores emails lowercased; matching and dedupe rely on it.
+      // Orqestra stores emails lowercased; matching and dedupe rely on it.
       emails: [...new Set(c.emails.map((e) => e.trim().toLowerCase()).filter(Boolean))],
       phones: c.phones,
       links: c.links,
@@ -561,7 +561,7 @@ export function createLoader(deps: LoaderDeps): Loader {
   }
 
   /**
-   * Where a vendor application sits in Source: stage, status, archive reason
+   * Where a vendor application sits in Orqestra: stage, status, archive reason
    * and date, and the stage history leading there (oldest first, the last
    * move into the current stage).
    */
@@ -597,7 +597,7 @@ export function createLoader(deps: LoaderDeps): Loader {
       transitions.push({ stageId, at: hiredAt, actorId: null });
     }
     const lastMove = transitions[transitions.length - 1].at;
-    // Like a hire made in Source: no archive date or reason, just the Hired stage.
+    // Like a hire made in Orqestra: no archive date or reason, just the Hired stage.
     const archivedAt = status === 'ARCHIVED' ? (a.archivedAt ?? lastMove) : null;
     return { stageId, status, archiveReasonId, archivedAt, transitions, lastMove };
   }
@@ -648,9 +648,9 @@ export function createLoader(deps: LoaderDeps): Loader {
 
   /**
    * An application imported before. If the vendor moved it (or archived,
-   * unarchived or hired it) and nobody moved it in Source since, it follows,
+   * unarchived or hired it) and nobody moved it in Orqestra since, it follows,
    * and the vendor's moves since the last import are added to its history.
-   * If someone moved it in Source, their move stands.
+   * If someone moved it in Orqestra, their move stands.
    */
   async function resyncApplication(prior: PriorRef, a: ImportedApplication) {
     if (!deps.updates || thisRun(prior)) return bump('opportunity.existing');
@@ -944,7 +944,7 @@ export function createLoader(deps: LoaderDeps): Loader {
       const values = { body: clip(`${byline}${body}`) };
       const sync = { fp: fingerprint(n), values };
       if (prior) {
-        // Notes can't be edited in Source, so an old ref's note is as the import wrote it.
+        // Notes can't be edited in Orqestra, so an old ref's note is as the import wrote it.
         return resync('note', n.externalId, prior, sync, {
           legacy: 'ours',
           read: async () => {
@@ -1043,7 +1043,7 @@ export function createLoader(deps: LoaderDeps): Loader {
       if (prior && !deps.updates) return bump('feedback.existing');
       if (prior) {
         // Imported as a note (no overall decision at the time) or as a scorecard;
-        // neither can be edited in Source, so an old ref's record is as written.
+        // neither can be edited in Orqestra, so an old ref's record is as written.
         const note = await db.note.findFirst({ where: { id: prior.internalId, orgId, opportunity: { contact: { isAnonymized: false } } }, select: { body: true } });
         if (note) {
           if (!summaryText) return bump('feedback.empty');
@@ -1130,7 +1130,7 @@ export function createLoader(deps: LoaderDeps): Loader {
       }
       const values = {
         // An offer waiting on approval in the old system has no approval request
-        // here; as a draft it can be picked up and sent through Source's flow.
+        // here; as a draft it can be picked up and sent through Orqestra's flow.
         status: (o.status === 'PENDING_APPROVAL' ? 'DRAFT' : o.status) as OfferStatus,
         jobTitle: clip(jobTitle, 200),
         salaryAmount: int32(o.salaryAmount),
@@ -1169,7 +1169,7 @@ export function createLoader(deps: LoaderDeps): Loader {
               orgId,
               opportunityId: opportunityId!,
               ...values,
-              // Drafts can be sent from Source, which needs the candidate link token.
+              // Drafts can be sent from Orqestra, which needs the candidate link token.
               token: values.status === 'DRAFT' ? randomBytes(24).toString('base64url') : null,
               createdAt: o.createdAt ?? undefined,
             },

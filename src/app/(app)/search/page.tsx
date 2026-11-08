@@ -4,7 +4,7 @@ import { PageSkeleton } from '@/components/page-skeleton';
 import { firstParams, type SearchParams } from '@/lib/utils';
 import { SearchScreen } from './screen';
 
-export const metadata = { title: 'Search — Source' };
+export const metadata = { title: 'Search — Orqestra' };
 
 async function SearchContent({ searchParams }: { searchParams: SearchParams }) {
   const { q } = await firstParams(searchParams);

@@ -27,7 +27,7 @@ export function OnboardingPipeline({ stages }: { stages: React.ComponentProps<ty
     <>
       <section className={`${surface} p-5`}>
         <h2 className="mb-1 text-md font-medium">3 · Your hiring pipeline</h2>
-        <p className="mb-4 text-sm text-ink-2">Start from Source&apos;s stages, or bring the ones you use today.</p>
+        <p className="mb-4 text-sm text-ink-2">Start from Orqestra&apos;s stages, or bring the ones you use today.</p>
         <Segmented<From>
           value={from}
           onChange={setFrom}
@@ -59,7 +59,7 @@ export function OnboardingPipeline({ stages }: { stages: React.ComponentProps<ty
             </div>
             <p className="mt-4 text-sm text-ink-2">
               Your stages will come from {meta.name}. You&apos;ll choose where each one lands, and whether it
-              replaces Source&apos;s starter stages, before any candidates come over.
+              replaces Orqestra&apos;s starter stages, before any candidates come over.
             </p>
           </div>
         ) : (

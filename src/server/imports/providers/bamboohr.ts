@@ -238,7 +238,7 @@ const WITHDRAWN = /withdr[ae]w|declin|hired elsewhere|accepted another|no longer
 const statusName = (s: BambooStatus) => s.name?.trim() || s.translatedName?.trim() || `Status ${s.id}`;
 
 /**
- * BambooHR stars → Source's 1 strong no · 2 no · 3 yes · 4 strong yes. Three
+ * BambooHR stars → Orqestra's 1 strong no · 2 no · 3 yes · 4 strong yes. Three
  * stars is neutral, not a decision, so it becomes null and the engine keeps
  * it as a note.
  */

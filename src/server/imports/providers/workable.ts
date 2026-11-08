@@ -70,7 +70,7 @@ import type {
  *   step. A move is an activity with `target_stage`; ratings carry a per-rating
  *   scale (thumbs/stars/numbers) with a 0-based grade. Activities restricted
  *   to some roles (`visibility_roles` without `simple`) are skipped with a
- *   warning, because Source notes have no private setting.
+ *   warning, because Orqestra notes have no private setting.
  * - Job state `closed` means internal/unlisted (still hiring); `archived` is
  *   closed. Sample (demo) jobs, their candidates, and GDPR-anonymized
  *   candidates are skipped.
@@ -257,7 +257,7 @@ const WITHDREW: ReasonRef = { name: 'Withdrew' };
 const SAMPLE_JOB = "Skipped Workable's sample (demo) jobs";
 const SAMPLE_CANDIDATES = "Skipped candidates of Workable's sample (demo) jobs";
 const RESTRICTED =
-  'Skipped Workable comments, emails and evaluations that only some roles could see (Source notes have no private setting)';
+  'Skipped Workable comments, emails and evaluations that only some roles could see (Orqestra notes have no private setting)';
 const EMPTY_PAGE = { items: [], next: null };
 
 const STAGE_KIND: Record<string, StageType> = {
@@ -605,7 +605,7 @@ function toOffer(o: WOffer, c: WCandidate, applicationId: string): ImportedOffer
   const yearly = amount != null && perYear(money?.frequency);
   const raw = o.state?.trim() ?? '';
 
-  // Everything the offer form held that Source has no column for stays readable in the notes.
+  // Everything the offer form held that Orqestra has no column for stays readable in the notes.
   const used = new Set(['job', 'start_date', ...(yearly ? ['salary'] : [])]);
   const lines = vars
     .filter((v) => !used.has(v.document_variable?.slug ?? ''))

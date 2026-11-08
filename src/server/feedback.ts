@@ -142,7 +142,7 @@ export async function processFeedbackReminders(): Promise<number> {
         orgId: interview.orgId,
         toEmail: panelist.email,
         subject: `Scorecard missing: ${candidate} — ${interview.title}`,
-        body: `Hi ${panelist.name.split(' ')[0]},\n\nYou interviewed ${candidate} for ${role} (${interview.title}) and your scorecard hasn't been submitted yet. Feedback loses fidelity fast — please add it while it's fresh.\n\nOpen the candidate: /candidates/${interview.opportunityId}\n\n— Source`,
+        body: `Hi ${panelist.name.split(' ')[0]},\n\nYou interviewed ${candidate} for ${role} (${interview.title}) and your scorecard hasn't been submitted yet. Feedback loses fidelity fast — please add it while it's fresh.\n\nOpen the candidate: /candidates/${interview.opportunityId}\n\n— Orqestra`,
       });
       await db.event.create({
         data: {

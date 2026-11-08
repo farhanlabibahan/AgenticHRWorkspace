@@ -955,7 +955,7 @@ export const mergeProvider: ProviderModule = {
               if (!body) return;
               const visibility = n.visibility?.toUpperCase();
               if (visibility === 'PRIVATE' || visibility === 'ADMIN_ONLY') {
-                ctx.warn('Imported notes that were private or admin-only in the ATS; Source shows them to anyone who can see the candidate');
+                ctx.warn('Imported notes that were private or admin-only in the ATS; Orqestra shows them to anyone who can see the candidate');
               }
               const createdAt = toDate(n.remote_created_at);
               if (!createdAt) ctx.warn(undated('notes', false));

@@ -46,7 +46,7 @@ async function deliver(messageId: string, attachments?: EmailAttachment[]) {
   try {
     if (transport) {
       await transport.sendMail({
-        from: process.env.EMAIL_FROM ?? 'Source <no-reply@source.local>',
+        from: process.env.EMAIL_FROM ?? 'Orqestra <no-reply@orqestra.local>',
         to: message.toEmail,
         subject: message.subject,
         text: message.body,

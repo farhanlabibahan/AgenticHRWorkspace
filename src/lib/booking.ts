@@ -1,7 +1,7 @@
 /**
  * A recruiter's own booking page (Calendly, Cal.com, a Google Calendar
  * appointment schedule, or anything else with a URL), offered to candidates
- * as an alternative to Source's built-in self-schedule link. Pure helpers,
+ * as an alternative to Orqestra's built-in self-schedule link. Pure helpers,
  * shared by the server action and the interview panel.
  */
 

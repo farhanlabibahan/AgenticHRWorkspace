@@ -9,7 +9,7 @@ import { OnboardingPipeline } from '@/components/onboarding-pipeline';
 import { btnGhost, surface } from '@/components/form-controls';
 import { signOut } from '@/lib/auth';
 
-export const metadata = { title: 'Set up · Source' };
+export const metadata = { title: 'Set up · Orqestra' };
 
 async function signOutAction() {
   'use server';

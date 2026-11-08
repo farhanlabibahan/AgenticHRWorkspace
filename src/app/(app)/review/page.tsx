@@ -4,7 +4,7 @@ import { PageSkeleton } from '@/components/page-skeleton';
 import { firstParams, type SearchParams } from '@/lib/utils';
 import { ReviewScreen } from './screen';
 
-export const metadata = { title: 'Review — Source' };
+export const metadata = { title: 'Review — Orqestra' };
 
 async function ReviewContent({ searchParams }: { searchParams: SearchParams }) {
   const { posting } = await firstParams(searchParams);

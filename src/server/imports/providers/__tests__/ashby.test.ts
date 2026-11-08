@@ -1222,7 +1222,7 @@ describe.skipIf(!hasDb)('Ashby adapter', () => {
     expect(archived).toMatchObject({ status: 'ARCHIVED', origin: 'APPLIED', ownerId: null });
     expect(archived.archiveReason).toMatchObject({ name: 'Compensation mismatch', countsAsRejection: false });
     expect(archived.archivedAt!.toISOString()).toBe('2026-03-20T13:08:40.772Z');
-    // Ashby parks archived applications in an "Archived" stage; Source keeps the last real one.
+    // Ashby parks archived applications in an "Archived" stage; Orqestra keeps the last real one.
     expect(archived.stage.name).toBe('Recruiter Screen');
     expect(archived.stageTransitions.map((t) => t.toStage.name)).toEqual(['Application Review', 'Recruiter Screen']);
     expect(archived.posting!.state).toBe('CLOSED');

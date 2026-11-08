@@ -19,7 +19,7 @@ import { toolPayload } from '@/server/notetakers/parse';
 
 export type McpSession = { tools: Tool[]; call: ToolCaller };
 
-const CLIENT_INFO = { name: 'source-ats', title: 'Source ATS', version: '1.0.0' };
+const CLIENT_INFO = { name: 'orqestra', title: 'Orqestra', version: '1.0.0' };
 
 export async function withMcpSession<T>(
   serverUrl: string,

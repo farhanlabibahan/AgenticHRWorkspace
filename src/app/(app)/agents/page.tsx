@@ -10,7 +10,7 @@ import { LocalTime } from '@/components/local-time';
 import { requireSession, isAdmin } from '@/lib/session';
 import { agentStats, listAgentRuns } from '@/server/hr-agents';
 
-export const metadata = { title: 'AI agents — Source' };
+export const metadata = { title: 'AI agents — Orqestra' };
 
 async function AgentsContent() {
   const ctx = await requireSession();

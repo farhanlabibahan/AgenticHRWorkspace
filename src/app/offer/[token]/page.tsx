@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/primitives';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'Your offer — Source' };
+export const metadata = { title: 'Your offer — Orqestra' };
 
 /**
  * Public offer letter + e-signature page, reachable only via the offer's

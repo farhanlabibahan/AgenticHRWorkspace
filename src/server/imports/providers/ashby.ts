@@ -51,7 +51,7 @@ import type {
  * - Application status Lead is an active sourced prospect. Hired has no
  *   timestamp of its own: it's the history entry into the current (Hired)
  *   stage, else the application's last update.
- * - Custom fields live on candidates and applications; Source keeps them on
+ * - Custom fields live on candidates and applications; Orqestra keeps them on
  *   applications, so a candidate's values are copied onto each of its new
  *   applications (candidate.info, only when the org defines candidate fields).
  *   Date fields can arrive as full instants; customField.list says which are
@@ -65,7 +65,7 @@ import type {
  *   repair an application committed without it. A 403 on any of them is a
  *   revoked key and stops the import.
  * - Feedback is decoded with the form snapshot each submission carries. The
- *   default form's `overall_recommendation` is already Source's 1–4 scale;
+ *   default form's `overall_recommendation` is already Orqestra's 1–4 scale;
  *   custom forms map by option label, but only a rating-shaped field counts as
  *   the decision. A submission with no overall field falls back to the mean of
  *   its Score answers, and one with neither becomes a note.
@@ -442,7 +442,7 @@ function stageTypeHints(stages: AshbyStage[]): Map<string, StageType> {
   return hints;
 }
 
-// The kind only sets the review's default "counts as rejection". Source counts the
+// The kind only sets the review's default "counts as rejection". Orqestra counts the
 // org's rejections, not withdrawals; Ashby's `Other` (duplicates, filled roles)
 // isn't a rejection either, and 'withdrawn' is the non-counting kind it can borrow.
 const REASON_KIND: Record<string, ReasonKind> = {
@@ -1140,7 +1140,7 @@ export const ashbyProvider: ProviderModule = {
 
       const defs = await customFieldDefs(ctx);
       record.fields = customFields(a.customFields, defs?.dateOnly);
-      // Source keeps custom fields on applications, so the candidate's ride along (the application's win a clash).
+      // Orqestra keeps custom fields on applications, so the candidate's ride along (the application's win a clash).
       // With a `since` cutoff, candidate.list skipped older candidates; one who applied again after it
       // gets the full record instead of the shallow inline copy.
       const wantFields = !!defs?.onCandidates;
@@ -1414,7 +1414,7 @@ export const ashbyProvider: ProviderModule = {
         enabled: (o) => o.activity,
         run: forImportedCandidates(async (ctx, c, candidateId) => {
           if (Array.isArray(c.applicationIds) && !c.applicationIds.length) {
-            // Source keeps notes on applications; a CRM-only prospect has none to hold them.
+            // Orqestra keeps notes on applications; a CRM-only prospect has none to hold them.
             ctx.warn("Notes weren't imported for candidates with no applications", { entity: 'note' });
             return;
           }
@@ -1426,7 +1426,7 @@ export const ashbyProvider: ProviderModule = {
                 candidateExternalId: candidateId,
                 authorExternalUserId: x.author?.id ? String(x.author.id) : null,
                 authorName: userName(x.author),
-                // Source notes have no private flag; keep Ashby's so nobody mistakes it for a shared note.
+                // Orqestra notes have no private flag; keep Ashby's so nobody mistakes it for a shared note.
                 body: `${x.isPrivate ? '[Private] ' : ''}${x.content?.trim() ?? ''}`,
                 createdAt: toDate(x.createdAt),
               }),

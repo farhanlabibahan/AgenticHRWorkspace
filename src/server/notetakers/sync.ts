@@ -149,7 +149,7 @@ export function authForConnection(
   const name = providerName(conn.provider);
   if (conn.authType === 'API_KEY') {
     const secrets = openSecrets(conn.credentials);
-    if (secrets?.kind !== 'api_key') throw new ReconnectRequiredError(`Source can't read the saved ${name} API key. Add it again.`);
+    if (secrets?.kind !== 'api_key') throw new ReconnectRequiredError(`Orqestra can't read the saved ${name} API key. Add it again.`);
     return { authProvider: { token: async () => secrets.apiKey }, oauth: null };
   }
   if (!conn.redirectUri || !conn.credentials) throw new ReconnectRequiredError(`${name} needs you to sign in again`);
@@ -192,7 +192,7 @@ export function describeFailure(conn: Pick<TranscriptConnection, 'provider' | 'a
   // Any other answer from the token endpoint (temporarily_unavailable…): a refused
   // grant or client never gets here, the SDK turns those into a new sign-in.
   if (OAuthError.isInstance(err)) {
-    return { status: 'ERROR', error: `Couldn't refresh the ${name} sign-in (${clip(String(err.code), 40)}). Source will try again.` };
+    return { status: 'ERROR', error: `Couldn't refresh the ${name} sign-in (${clip(String(err.code), 40)}). Orqestra will try again.` };
   }
   const httpStatus = (err as { data?: { status?: unknown } } | null)?.data?.status;
   // A refused credential: 401, or 403 as Fireflies answers a key it doesn't know.
@@ -205,7 +205,7 @@ export function describeFailure(conn: Pick<TranscriptConnection, 'provider' | 'a
   if (err instanceof MissingToolsError || err instanceof ToolOutputError) return { status: 'ERROR', error: clip(err.message, 300) };
   if (err instanceof ToolCallError) return { status: 'ERROR', error: clip(`${name} returned an error from ${err.tool}: ${err.message}`, 300) };
   // The response body of an HTTP error can be anything; the status says enough.
-  if (typeof httpStatus === 'number') return { status: 'ERROR', error: `${name} answered with HTTP ${httpStatus}. Source will try again.` };
+  if (typeof httpStatus === 'number') return { status: 'ERROR', error: `${name} answered with HTTP ${httpStatus}. Orqestra will try again.` };
   const message = err instanceof Error ? err.message : String(err);
   return { status: 'ERROR', error: clip(`Couldn't sync with ${name}: ${message}`, 300) };
 }

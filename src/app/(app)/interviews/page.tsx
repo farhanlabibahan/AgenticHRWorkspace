@@ -3,7 +3,7 @@ import { loadInterviewsPage } from '@/app/(app)/page-loaders';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { InterviewsScreen } from './screen';
 
-export const metadata = { title: 'Interviews — Source' };
+export const metadata = { title: 'Interviews — Orqestra' };
 
 async function InterviewsContent() {
   return <InterviewsScreen data={await loadInterviewsPage()} />;

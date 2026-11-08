@@ -36,7 +36,7 @@ type Params = {
  * dimension, filtered by status/origin/posting/date range. Configs are
  * shareable URLs and saveable to Reports.
  */
-export const metadata = { title: 'Report builder — Source' };
+export const metadata = { title: 'Report builder — Orqestra' };
 
 export default async function ReportBuilderPage({
   searchParams,

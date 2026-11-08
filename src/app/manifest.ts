@@ -7,8 +7,8 @@ import type { MetadataRoute } from 'next';
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Source ATS',
-    short_name: 'Source',
+    name: 'Orqestra',
+    short_name: 'Orqestra',
     description: 'The ATS built for the age of AI.',
     start_url: '/',
     display: 'standalone',

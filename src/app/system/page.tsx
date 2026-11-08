@@ -8,7 +8,7 @@ import { inputClass, inputLgClass, textareaClass, Field, badge, noAutofill } fro
 import { EmptyState } from '@/components/empty-state';
 import { BotLab, ChartLab, MotionLab } from './demos';
 
-export const metadata: Metadata = { title: 'Design system · Source', robots: { index: false } };
+export const metadata: Metadata = { title: 'Design system · Orqestra', robots: { index: false } };
 
 /**
  * Living specimen for docs/09-design-system.md. Every token and primitive
@@ -97,7 +97,7 @@ export default function SystemPage() {
   return (
     <div className="mx-auto max-w-[1120px] px-4 pb-32 pt-16 md:px-8">
       <header className="mb-12">
-        <p className="text-xs font-medium text-ink-2">Source · docs/09</p>
+        <p className="text-xs font-medium text-ink-2">Orqestra · docs/09</p>
         <h1 className="mt-3 text-4xl md:text-5xl">Design system</h1>
         <p className="mt-4 max-w-prose text-md text-ink-2">
           Value, not lines. The interface stays grey and the content carries the color. Pills are

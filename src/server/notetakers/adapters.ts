@@ -52,7 +52,7 @@ export class MissingToolsError extends Error {
 }
 
 /** Every provider asks why a tool is being called in some form; this is the answer. */
-export const INTENT = 'Find interview recordings to attach to the matching interviews in Source ATS';
+export const INTENT = 'Find interview recordings to attach to the matching interviews in Orqestra';
 
 const MAX_PAGES = 10;
 const DAY = 86_400_000;

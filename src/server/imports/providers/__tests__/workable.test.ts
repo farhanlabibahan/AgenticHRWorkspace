@@ -36,7 +36,7 @@ const API = 'acme.workable.com/spi/v3';
 const RESUMES = 'workable-resumes.s3.amazonaws.com';
 const ATTACHMENTS = 'workable-application-attachments.s3.amazonaws.com';
 const RESTRICTED =
-  'Skipped Workable comments, emails and evaluations that only some roles could see (Source notes have no private setting)';
+  'Skipped Workable comments, emails and evaluations that only some roles could see (Orqestra notes have no private setting)';
 const signed = (host: string, path: string) =>
   `https://${host}${path}?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAEXAMPLE%2F20260923%2Fus-east-1%2Fs3%2Faws4_request` +
   '&X-Amz-Date=20260923T120000Z&X-Amz-Expires=60000&X-Amz-SignedHeaders=host&X-Amz-Signature=5d3a0c9e';

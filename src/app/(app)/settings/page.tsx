@@ -38,7 +38,7 @@ import { badge, btnPrimary, btnTonal, inputClass, selectClass, surface, noAutofi
 import { buttonClass } from '@/components/ui/button';
 import { SectionHeader } from '@/components/ui/primitives';
 
-export const metadata = { title: 'Settings — Source' };
+export const metadata = { title: 'Settings — Orqestra' };
 
 /** A settings group: a quiet label on the canvas above one white card of rows. */
 function Group({
@@ -322,9 +322,9 @@ export default async function SettingsPage({
             description={
               <>
                 Adds an optional, unchecked opt-in to your apply forms: candidates can choose to be
-                discoverable by other employers on the Source network. Consent is recorded per
+                discoverable by other employers on the Orqestra network. Consent is recorded per
                 candidate and withdrawable from their status portal. (Network search &amp;
-                distribution are Source ATS features.)
+                distribution are Orqestra features.)
               </>
             }
           >
@@ -525,7 +525,7 @@ export default async function SettingsPage({
         {section === 'data' ? (
         <Group title="Data export">
           <ControlRow
-            description="Download everything your organization owns as JSON — candidates, postings, pipeline history, feedback, emails, and the full activity stream. Use it for backups or to move between self-hosted and managed Source."
+            description="Download everything your organization owns as JSON — candidates, postings, pipeline history, feedback, emails, and the full activity stream. Use it for backups or to move between self-hosted and managed Orqestra."
           >
             <a href="/api/export" className={buttonClass({ variant: 'tonal', size: 'sm' })}>
               Export organization data

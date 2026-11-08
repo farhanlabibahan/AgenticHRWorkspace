@@ -4,7 +4,7 @@ import { FieldValidation } from '@/components/field-validation';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Source',
+  title: 'Orqestra',
   description:
     'Open source Applicant Tracking System — candidate pipeline, postings, interviews, offers, and analytics.',
 };

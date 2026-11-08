@@ -4,7 +4,7 @@ import { PageSkeleton } from '@/components/page-skeleton';
 import { firstParams, type SearchParams } from '@/lib/utils';
 import { ContactsScreen } from './screen';
 
-export const metadata = { title: 'Contacts — Source' };
+export const metadata = { title: 'Contacts — Orqestra' };
 
 async function ContactsContent({ searchParams }: { searchParams: SearchParams }) {
   return <ContactsScreen data={await loadContactsPage(await firstParams(searchParams))} />;

@@ -25,7 +25,7 @@ export function buildInterviewIcs(input: {
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Source//Interview//EN',
+    'PRODID:-//Orqestra//Interview//EN',
     'METHOD:PUBLISH',
     'BEGIN:VEVENT',
     `UID:${input.uid}@source`,

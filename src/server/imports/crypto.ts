@@ -24,7 +24,7 @@ export type SealPurpose = 'import-credentials' | 'notetaker-credentials' | 'note
 function key(purpose: SealPurpose): Buffer {
   const secret = process.env.IMPORT_ENCRYPTION_KEY || process.env.AUTH_SECRET;
   if (!secret) throw new Error('Set AUTH_SECRET (or IMPORT_ENCRYPTION_KEY) to store credentials');
-  return Buffer.from(hkdfSync('sha256', secret, 'source-ats', purpose, 32));
+  return Buffer.from(hkdfSync('sha256', secret, 'orqestra', purpose, 32));
 }
 
 /** AES-256-GCM seal of any JSON value. */

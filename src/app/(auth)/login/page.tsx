@@ -9,7 +9,7 @@ import { googleAuthEnabled } from '@/server/google-auth';
 import { requestOrigin } from '@/server/request-origin';
 import { login } from '../actions';
 
-export const metadata = { title: 'Sign in · Source' };
+export const metadata = { title: 'Sign in · Orqestra' };
 
 // Rendered per-request so the DEMO_MODE flag and the Google keys are read
 // at runtime, not baked in at build time.

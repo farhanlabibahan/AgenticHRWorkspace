@@ -1213,7 +1213,7 @@ describe.skipIf(!hasDb)('recruitee import', () => {
       files: await db.storedFile.count({ where: { orgId } }),
     }).toEqual(before);
     // Already-imported jobs, requisitions, histories, files and scorecards aren't fetched again. A
-    // profile is re-read only for a CV link Source doesn't have yet (these three have no usable CV).
+    // profile is re-read only for a CV link Orqestra doesn't have yet (these three have no usable CV).
     const paths = mock.calls.map((c) => c.url.pathname);
     expect([...new Set(pathsOf(mock.calls, /\/candidates\/\d+$/))].sort()).toEqual([
       '/c/49498/candidates/1711504', '/c/49498/candidates/2266', '/c/49498/candidates/28057517',

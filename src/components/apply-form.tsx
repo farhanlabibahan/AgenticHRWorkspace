@@ -101,7 +101,7 @@ export function ApplyForm({
           <Checkbox name="networkOptIn" className="mt-0.5" />
           <span className="text-xs text-ink-2">
             <span className="font-medium text-ink">
-              Make my profile discoverable by other employers hiring on Source.
+              Make my profile discoverable by other employers hiring on Orqestra.
             </span>{' '}
             Optional — does not affect this application. Only the details you submit here are
             shared, never interview notes or feedback. You can withdraw at any time from your

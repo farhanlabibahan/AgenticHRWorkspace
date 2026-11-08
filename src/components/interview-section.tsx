@@ -457,7 +457,7 @@ export function InterviewSection({
  * First time, they paste it (saved to their account, so it's there for every
  * candidate); after that it's one click to copy. Calendly and Cal.com links
  * carry the candidate's name and email so the booking form is filled in.
- * Bookings made there don't come back into Source, and the panel says so.
+ * Bookings made there don't come back into Orqestra, and the panel says so.
  */
 function BookingPagePanel({
   opportunityId,
@@ -494,7 +494,7 @@ function BookingPagePanel({
           {prefilled
             ? `The link fills in ${candidate.name.split(' ')[0]}’s name and email, so they only pick a time. `
             : ''}
-          Bookings made there don’t come back into Source on their own: once they book, add the interview
+          Bookings made there don’t come back into Orqestra on their own: once they book, add the interview
           with Schedule.
         </p>
         <div className="flex justify-end gap-2">

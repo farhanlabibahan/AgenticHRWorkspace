@@ -6,7 +6,7 @@ import { SourceLockup } from '@/components/powered-by';
 import { demoEnabled } from '@/server/demo-accounts';
 import { getAuthSession } from '@/lib/session';
 
-export const metadata = { title: 'Source — hiring and HR in one place' };
+export const metadata = { title: 'Orqestra — hiring and HR in one place' };
 export const dynamic = 'force-dynamic';
 
 const FEATURES = [
@@ -96,7 +96,7 @@ export default async function LandingPage() {
         </section>
 
         <footer className="flex flex-col gap-2 border-t border-line py-8 text-xs text-ink-2 sm:flex-row sm:justify-between">
-          <span>Source: open-source hiring and HR.</span>
+          <span>Orqestra: open-source hiring and HR.</span>
           <span>Agents are rule-based. Nothing is decided without a person.</span>
         </footer>
       </main>

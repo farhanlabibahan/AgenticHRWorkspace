@@ -20,7 +20,7 @@ export function nameKey(name: string): string {
 }
 
 /**
- * Looser match for pairing a vendor's name with one already in Source:
+ * Looser match for pairing a vendor's name with one already in Orqestra:
  * letters and digits only, accents dropped — "Onsite", "On-site" and
  * "on site" are the same stage. Used for suggestions, never for grouping.
  */
@@ -124,7 +124,7 @@ export function catalogWriter(catalog: Catalog): CatalogWriter {
 
 export type StageTarget = { stageId: string } | { create: { name: string; type: StageType } };
 /**
- * Source's reports count a reason as a rejection only when the org turned the
+ * Orqestra's reports count a reason as a rejection only when the org turned the
  * candidate down (see the default "Withdrew" / "Timing" reasons). Candidate
  * withdrawals and hires don't inflate rejection metrics; unknowns do, as the
  * conservative read.
@@ -139,7 +139,7 @@ export type MappingInput = {
   stages: Record<string, StageTarget>;
   reasons: Record<string, ReasonTarget>;
   /**
-   * A brand-new workspace (no applications yet) can drop Source's starter
+   * A brand-new workspace (no applications yet) can drop Orqestra's starter
    * stages that no vendor stage maps to, so its pipeline is the vendor's.
    */
   replaceStarters?: boolean;

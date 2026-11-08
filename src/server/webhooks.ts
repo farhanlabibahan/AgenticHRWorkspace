@@ -112,7 +112,7 @@ export async function processWebhooks(): Promise<number> {
           headers: {
             'Content-Type': 'application/json',
             'X-Source-Signature': signPayload(endpoint.secret, timestamp, body),
-            'User-Agent': 'Source-Webhooks/1.0',
+            'User-Agent': 'Orqestra-Webhooks/1.0',
           },
           body,
           signal: AbortSignal.timeout(TIMEOUT_MS),

@@ -22,7 +22,7 @@ import { activeSessionUser, type SessionUser } from '@/server/session-user';
 /**
  * "Continue with Google". next-auth runs the OAuth dance (state and PKCE
  * checks, the id token's signature, issuer and audience); this module decides
- * who the verified Google account is in Source (see google-account.ts).
+ * who the verified Google account is in Orqestra (see google-account.ts).
  *
  * One match signs in straight from Google's callback. Several workspaces, or
  * none, need one more step: the verified identity waits in a short-lived,

@@ -55,7 +55,7 @@ function Panel({
   );
 }
 
-export const metadata = { title: 'Reports — Source' };
+export const metadata = { title: 'Reports — Orqestra' };
 
 export default async function ReportsPage({
   searchParams,

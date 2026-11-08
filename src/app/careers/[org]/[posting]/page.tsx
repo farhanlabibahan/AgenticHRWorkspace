@@ -114,7 +114,7 @@ export default async function PostingPage({
             <div className="py-2">
               <h2 className="text-xl font-medium">This is a sample job board</h2>
               <p className="mt-2 max-w-md text-sm text-ink-2">
-                Applying is off here. It shows what candidates see on a careers page run by Source ATS.
+                Applying is off here. It shows what candidates see on a careers page run by Orqestra.
               </p>
               <Link href="/" className={buttonClass({ variant: 'primary', size: 'lg', className: 'mt-6' })}>
                 Get your own careers page

@@ -15,7 +15,7 @@ export function NetworkConsentToggle({ token, optedIn }: { token: string; optedI
         <p className="text-sm font-medium">Discoverable by other employers</p>
         <p className="mt-0.5 text-xs text-ink-2">
           {optedIn
-            ? 'Your profile can be found by other companies hiring on Source. Only details you submitted are shared — never interview notes or feedback.'
+            ? 'Your profile can be found by other companies hiring on Orqestra. Only details you submitted are shared — never interview notes or feedback.'
             : 'Your profile is private to the companies you applied to.'}
         </p>
       </div>

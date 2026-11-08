@@ -93,7 +93,7 @@ export function NotetakerConnections({
     <div className="flex flex-col divide-y divide-line">
       <div className="px-4 py-4">
         <p className="max-w-prose text-sm text-ink-2">
-          Connect the notetaker you record interviews with. Every 10 minutes Source looks for meetings that line up with
+          Connect the notetaker you record interviews with. Every 10 minutes Orqestra looks for meetings that line up with
           interviews you&apos;re on and attaches their transcripts. Other meetings are skipped, and nothing about them is
           kept.
         </p>
@@ -313,7 +313,7 @@ function ProviderRow({
               </button>
             </div>
           </div>
-          <p className="text-xs text-ink-2">{meta.apiKey.where} Source checks the key before saving it, and stores it encrypted.</p>
+          <p className="text-xs text-ink-2">{meta.apiKey.where} Orqestra checks the key before saving it, and stores it encrypted.</p>
         </form>
       ) : null}
 

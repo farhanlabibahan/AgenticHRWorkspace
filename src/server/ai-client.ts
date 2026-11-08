@@ -1,11 +1,11 @@
 import { qaFromDialogue } from '@/lib/interview-insights';
 
 /**
- * Source's AI provider protocol: the client side. The open-source core has
+ * Orqestra's AI provider protocol: the client side. The open-source core has
  * no prompts and calls no model. Its AI features (candidate evaluations,
  * role criteria, Ask AI and interview insights) send
  * the material to a provider service as JSON and store what comes back.
- * Source ATS runs one; anyone can run their own against the same protocol
+ * Orqestra runs one; anyone can run their own against the same protocol
  * (docs/ai-protocol.md).
  *
  *   AI_SERVICE_URL    the provider, e.g. https://ai.example.com (turns AI on)

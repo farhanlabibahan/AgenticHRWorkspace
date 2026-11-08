@@ -1,6 +1,6 @@
 /**
  * Small, dependency-free helpers adapters share for turning vendor payloads
- * into Source's plain-text fields.
+ * into Orqestra's plain-text fields.
  */
 
 const ENTITIES: Record<string, string> = {
@@ -156,7 +156,7 @@ export function fullName(first?: string | null, last?: string | null, fallback =
   return [first, last].map((s) => (s ?? '').trim()).filter(Boolean).join(' ') || fallback;
 }
 
-/** Truncate long free text for Source's text columns. */
+/** Truncate long free text for Orqestra's text columns. */
 export function clip(text: string, max = 20_000): string {
   return text.length > max ? `${text.slice(0, max - 1)}…` : text;
 }

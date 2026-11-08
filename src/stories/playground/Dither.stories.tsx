@@ -210,7 +210,7 @@ Each chart passes its own options to useDither ({ ...BASE, pitch, floor, peak, .
 
   if (!parts.length) return 'No dither changes yet. Move a dial first.';
   return prompt(
-    'Make these the new default dither look in Source (tuned in the Storybook dither playground):',
+    'Make these the new default dither look in Orqestra (tuned in the Storybook dither playground):',
     `${parts.join('\n\n')}
 
 Update the dither notes in docs/09-design-system.md (orb and charts sections) to match, and check the orb still renders its live shader only at 64px and up.`,

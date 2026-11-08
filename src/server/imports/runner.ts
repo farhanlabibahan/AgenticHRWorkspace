@@ -408,7 +408,7 @@ export async function runSlice(
       const waits = progressed ? 0 : (stats['job.waits'] ?? 0) + 1;
       stats['job.waits'] = waits;
       if (waits > MAX_WAITS) {
-        await finishSafely(job, 'FAILED', { error: `${providerName(job.provider)} kept asking Source to wait, for over a day. Run the import again later.` }, token);
+        await finishSafely(job, 'FAILED', { error: `${providerName(job.provider)} kept asking Orqestra to wait, for over a day. Run the import again later.` }, token);
         return 'worked';
       }
       await checkpoint().catch(() => undefined);

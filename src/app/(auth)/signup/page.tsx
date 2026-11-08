@@ -4,7 +4,7 @@ import { GoogleSignIn } from '@/components/google-auth';
 import { googleAuthEnabled } from '@/server/google-auth';
 import { signup } from '../actions';
 
-export const metadata = { title: 'Sign up · Source' };
+export const metadata = { title: 'Sign up · Orqestra' };
 
 // Per request, so the Google keys are read at runtime, not at build time.
 export const dynamic = 'force-dynamic';

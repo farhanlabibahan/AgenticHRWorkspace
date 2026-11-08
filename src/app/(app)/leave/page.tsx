@@ -9,7 +9,7 @@ import { DecideButtons, LeaveRequestForm } from '@/components/hr-controls';
 import { requireSession, isAdmin } from '@/lib/session';
 import { listLeaveRequests, listLeaveTypes, leaveBalanceFor } from '@/server/hr';
 
-export const metadata = { title: 'Leave — Source' };
+export const metadata = { title: 'Leave — Orqestra' };
 
 const STATE_TONE: Record<string, { text: string; tone?: Tone }> = {
   PENDING: { text: 'Pending', tone: 'caution' },

@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/primitives';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'Pick a time — Source' };
+export const metadata = { title: 'Pick a time — Orqestra' };
 
 /**
  * Public candidate self-scheduling page. Reachable only via the unguessable

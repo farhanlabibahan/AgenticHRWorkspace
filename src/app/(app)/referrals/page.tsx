@@ -3,7 +3,7 @@ import { loadReferralsPage } from '@/app/(app)/page-loaders';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { ReferralsScreen } from './screen';
 
-export const metadata = { title: 'Referrals — Source' };
+export const metadata = { title: 'Referrals — Orqestra' };
 
 async function ReferralsContent() {
   return <ReferralsScreen data={await loadReferralsPage()} />;

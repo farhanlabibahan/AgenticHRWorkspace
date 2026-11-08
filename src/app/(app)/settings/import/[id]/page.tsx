@@ -6,7 +6,7 @@ import { getImportJob } from '@/server/imports/jobs';
 import { ImportJob } from '@/components/imports/import-job';
 
 /** One import's progress, stage review, and outcome. The client component keeps it moving. */
-export const metadata = { title: 'Import — Source' };
+export const metadata = { title: 'Import — Orqestra' };
 
 export default async function ImportJobPage({ params }: { params: Promise<{ id: string }> }) {
   const ctx = await requireSession();

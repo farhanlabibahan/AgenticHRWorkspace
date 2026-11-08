@@ -13,7 +13,7 @@ const DitheredBotAvatar = dynamic(
 import { cn } from '@/lib/utils';
 
 /**
- * The Source assistant's face (bot-avatars, libraries.dev/bots). One bot,
+ * The Orqestra assistant's face (bot-avatars, libraries.dev/bots). One bot,
  * one identity: a lavender form, drawn as an ordered dither on the lavender
  * orb's ink and paper so it reads as the orb's kin (see bot-dither.tsx).
  *
@@ -95,9 +95,9 @@ function watchPointer(fn: (x: number, y: number) => void) {
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const LABELS: Record<BotState, string> = {
-  idle: 'Source assistant',
-  working: 'Source assistant, working',
-  sleeping: 'Source assistant, not set up',
+  idle: 'Orqestra assistant',
+  working: 'Orqestra assistant, working',
+  sleeping: 'Orqestra assistant, not set up',
 };
 
 export function Bot({

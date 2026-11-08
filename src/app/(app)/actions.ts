@@ -252,7 +252,7 @@ export type BookingUrlFormState = { error?: string; saved?: boolean } | undefine
 
 /**
  * Save (or clear, when empty) the signed-in user's own booking page: the
- * Calendly / Cal.com / Google link they can send instead of a Source
+ * Calendly / Cal.com / Google link they can send instead of an Orqestra
  * self-schedule link. It's per person, so each recruiter keeps theirs.
  */
 export async function saveBookingUrlAction(

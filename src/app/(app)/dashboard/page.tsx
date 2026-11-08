@@ -3,7 +3,7 @@ import { loadDashboardPage } from '@/app/(app)/page-loaders';
 import { PageSkeleton } from '@/components/page-skeleton';
 import { DashboardScreen } from './screen';
 
-export const metadata = { title: 'Dashboard — Source' };
+export const metadata = { title: 'Dashboard — Orqestra' };
 
 async function DashboardContent() {
   return <DashboardScreen data={await loadDashboardPage()} />;

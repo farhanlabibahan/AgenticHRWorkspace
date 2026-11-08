@@ -9,7 +9,7 @@ import { Badge, StatusDot } from '@/components/ui/primitives';
 import { LocalTime } from '@/components/local-time';
 import { countAudience } from '@/server/newsletters';
 
-export const metadata = { title: 'Newsletters — Source' };
+export const metadata = { title: 'Newsletters — Orqestra' };
 
 const SUBTITLE = 'One email about your open roles, to every candidate';
 

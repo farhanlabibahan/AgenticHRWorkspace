@@ -54,7 +54,7 @@ export function redirectUriFor(origin: string): string {
 export function clientMetadataFor(origin: string, scope?: string): OAuthClientMetadata {
   const base = origin.replace(/\/+$/, '');
   return {
-    client_name: 'Source ATS',
+    client_name: 'Orqestra',
     client_uri: base,
     redirect_uris: [redirectUriFor(base)],
     grant_types: ['authorization_code', 'refresh_token'],
@@ -302,7 +302,7 @@ export class NotetakerOAuthProvider implements OAuthClientProvider {
     // A refused grant has already dropped the tokens (invalidateCredentials);
     // with a refresh token still here, the failure was the server's.
     if (this.mode.kind === 'background' && this.hasRefreshToken()) {
-      throw new RefreshFailedError(`Couldn't refresh the ${this.providerName} sign-in. Source will try again.`);
+      throw new RefreshFailedError(`Couldn't refresh the ${this.providerName} sign-in. Orqestra will try again.`);
     }
     // Never silently: in the background nobody is there to sign in.
     await this.reconnect();

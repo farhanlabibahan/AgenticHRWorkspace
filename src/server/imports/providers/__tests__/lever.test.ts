@@ -1235,7 +1235,7 @@ describe.skipIf(!hasDb)('Lever adapter', () => {
 
     const reqs = Object.fromEntries((await db.requisition.findMany({ where: { orgId } })).map((r) => [r.code, r]));
     expect(reqs['ENG-145']).toMatchObject({ state: 'OPEN', openings: 10, filled: 1, salaryMin: 50000, salaryMax: 80000 });
-    // "unlimited": enough openings that a hire in Source never auto-closes it.
+    // "unlimited": enough openings that a hire in Orqestra never auto-closes it.
     expect(reqs['OPS-7']).toMatchObject({ state: 'ON_HOLD', openings: 9999, filled: 0, salaryMin: null, backfill: true });
 
     // ----- candidates -----

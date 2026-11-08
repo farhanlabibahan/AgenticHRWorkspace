@@ -2,7 +2,7 @@ import type { StageType } from '@prisma/client';
 
 /**
  * Stage types, and the three groups a pipeline is edited in. The type is what
- * a stage means to Source whatever it's called: careers-page applications
+ * a stage means to Orqestra whatever it's called: careers-page applications
  * land in the first Applicant stage, sourced candidates and referrals in the
  * first Lead stage, scheduling is offered in Screen and Interview stages, a
  * move into Hired marks the hire, and reports compare pipelines by type.

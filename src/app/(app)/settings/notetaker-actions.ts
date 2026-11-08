@@ -42,7 +42,7 @@ function summarizeLater(ctx: SessionContext, transcriptId: string | null) {
 export async function connectNotetakerAction(provider: string): Promise<{ url: string } | { error: string }> {
   const ctx = await requireSession();
   const { origin } = await requestOrigin();
-  if (!origin) return { error: "Couldn't tell which address Source is on" };
+  if (!origin) return { error: "Couldn't tell which address Orqestra is on" };
   try {
     return await startNotetakerOAuth(ctx, provider, origin);
   } catch (err) {

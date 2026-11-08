@@ -12,7 +12,7 @@ import { db } from '@/lib/db';
 import { attendanceStatus, workDateOf, type AttendanceStatus } from '@/lib/hr-policy';
 import { dayKey, listAttendanceForDay } from '@/server/hr';
 
-export const metadata = { title: 'Attendance — Source' };
+export const metadata = { title: 'Attendance — Orqestra' };
 
 const LABEL: Record<AttendanceStatus, { text: string; tone?: Tone }> = {
   OFF_DAY: { text: 'Off day' },

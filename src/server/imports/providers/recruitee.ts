@@ -80,7 +80,7 @@ import type {
  *   phase; for the others a 403 can concern one candidate (a hired one, when
  *   the role can't see hires), so only a run of them stops the phase. Notes
  *   and attachments Recruitee restricts to named users or roles are skipped:
- *   Source shows notes to everyone who can see the application.
+ *   Orqestra shows notes to everyone who can see the application.
  * - Evaluations carry a label (`strong_no`…`strong_yes`) or, on numeric scales,
  *   only a score answer; scores are converted through the company's scale (the
  *   settings endpoint, else the scale the search results describe). Results
@@ -455,7 +455,7 @@ function amount(value: string | number | null | undefined): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
-/** Source salaries are annual: yearly passes through, monthly is ×12, anything else stays in the text. */
+/** Orqestra salaries are annual: yearly passes through, monthly is ×12, anything else stays in the text. */
 function annual(value: number | null, period: string | null | undefined): number | null {
   if (value == null) return null;
   if (!period || period === 'year') return value;
@@ -1647,7 +1647,7 @@ function createAdapter(credentials: Credentials, http: HttpClient, pageSize: num
         for (const { note: n, job, reply, hidden } of flattenNotes(res?.notes ?? [])) {
           await each(ctx, n, async () => {
             if (hidden) {
-              warnOnce(ctx, 'restricted-notes', 'Skipped notes Recruitee restricts to certain users or roles: in Source, everyone who can see an application can read its notes');
+              warnOnce(ctx, 'restricted-notes', 'Skipped notes Recruitee restricts to certain users or roles: in Orqestra, everyone who can see an application can read its notes');
               return;
             }
             // A note on a job whose application wasn't imported stays out rather than landing on another job.
@@ -1693,7 +1693,7 @@ function createAdapter(credentials: Credentials, http: HttpClient, pageSize: num
         for (const a of res?.attachments ?? []) {
           await each(ctx, a, async () => {
             if (restricted(a.visibility)) {
-              warnOnce(ctx, 'restricted-attachments', 'Skipped attachments Recruitee restricts to certain users or roles: in Source, everyone who can see an application can open its files');
+              warnOnce(ctx, 'restricted-attachments', 'Skipped attachments Recruitee restricts to certain users or roles: in Orqestra, everyone who can see an application can open its files');
               return;
             }
             const url = absoluteUrl(a.file_url);

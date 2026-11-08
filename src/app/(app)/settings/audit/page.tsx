@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 const PAGE_SIZE = 100;
 
 /** Org-wide admin-visible audit trail over the event stream (docs/02 §11). */
-export const metadata = { title: 'Audit log — Source' };
+export const metadata = { title: 'Audit log — Orqestra' };
 
 export default async function AuditLogPage({
   searchParams,

@@ -13,7 +13,7 @@ import { buttonClass } from '@/components/ui/button';
 import { Card, SectionHeader, StatusDot } from '@/components/ui/primitives';
 
 /** Settings → Import from another ATS: start a new import, reach the open one, and see past runs. */
-export const metadata = { title: 'Import from another ATS — Source' };
+export const metadata = { title: 'Import from another ATS — Orqestra' };
 
 const OPEN_COPY = {
   DISCOVERING: { title: (p: string) => `Reading your ${p} setup`, action: 'View progress' },
@@ -45,7 +45,7 @@ export default async function ImportPage({ searchParams }: { searchParams: Promi
       </div>
       <PageHeader
         title="Import from another ATS"
-        subtitle="Bring candidates, postings, and their history into Source. Running it again only adds what's new."
+        subtitle="Bring candidates, postings, and their history into Orqestra. Running it again only adds what's new."
       />
 
       <div className="mx-6 mt-4 flex max-w-3xl flex-col gap-8 pb-8">

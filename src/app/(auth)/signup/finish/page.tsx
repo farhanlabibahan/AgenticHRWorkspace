@@ -12,7 +12,7 @@ import {
   resolveGoogle,
 } from '@/server/google-auth';
 
-export const metadata = { title: 'Finish creating your workspace · Source' };
+export const metadata = { title: 'Finish creating your workspace · Orqestra' };
 
 export const dynamic = 'force-dynamic';
 

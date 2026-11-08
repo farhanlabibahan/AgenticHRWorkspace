@@ -3,7 +3,7 @@ import { CandidateProfile } from '@/components/candidate-profile';
 import { DrawerContent } from '@/components/drawer-host';
 import PipelinePage from '@/app/(app)/pipeline/page';
 
-export const metadata = { title: 'Candidate — Source' };
+export const metadata = { title: 'Candidate — Orqestra' };
 
 /**
  * A candidate opened directly (a refresh, a shared link): the same drawer as

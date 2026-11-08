@@ -81,7 +81,7 @@ import type {
  * - Resume/file `downloadUrl`s point at the web app (which redirects to a
  *   login page), so downloads use the documented API paths instead, and an
  *   HTML response is treated as a failed download.
- * - headcountTotal can be "unlimited", which Source can't express; those
+ * - headcountTotal can be "unlimited", which Orqestra can't express; those
  *   requisitions get a large opening count so hires never auto-close them.
  * - The API has no account-name endpoint; verify() names the account after
  *   the most common company email domain among its users.
@@ -108,7 +108,7 @@ const MAX_SPAN = 90 * DAY;
  */
 const WINDOW_PAGES = 2;
 
-/** Source has no unlimited headcount, and a hire auto-closes a requisition once filled >= openings. */
+/** Orqestra has no unlimited headcount, and a hire auto-closes a requisition once filled >= openings. */
 const UNLIMITED_OPENINGS = 9_999;
 /** Deleted records in a row, with no live one, before we say the deletedAt field looks wrong. */
 const DELETED_ALARM = 20;
@@ -445,7 +445,7 @@ const ORIGINS: Record<string, Origin> = {
 const OFFER_STATUSES: Record<string, OfferStatus> = {
   draft: 'DRAFT',
   'approval-sent': 'PENDING_APPROVAL',
-  // Approved but not sent: Source has no "approved" state, and a draft is what's left to do.
+  // Approved but not sent: Orqestra has no "approved" state, and a draft is what's left to do.
   approved: 'DRAFT',
   sent: 'SENT',
   'sent-manually': 'SENT',
@@ -504,7 +504,7 @@ function reasonKind(reason: LeverReason): ReasonKind {
   const name = (reason.text ?? '').toLowerCase();
   if (/withdr[ae]w|declin|accepted (another|other)|went elsewhere|hired elsewhere|not interested|unresponsive|ghost|no.?show|counter.?offer/.test(name))
     return 'withdrawn';
-  // No-fault, company-side reasons don't count as rejections in Source's defaults
+  // No-fault, company-side reasons don't count as rejections in Orqestra's defaults
   // (Timing, Position filled). ReasonKind has no neutral kind, and 'withdrawn' is
   // the only non-hired kind that isn't counted, so they use it.
   if (/timing|duplicate|(position|role|job|req\w*) (filled|closed|cancel)|hiring freeze|on hold|budget/.test(name)) return 'withdrawn';
@@ -542,13 +542,13 @@ function isAnnual(interval: string | null | undefined): boolean {
   return !interval || interval === 'per-year-salary';
 }
 
-/** Salary only when it's annual (or unstated): Source's salary fields are yearly. */
+/** Salary only when it's annual (or unstated): Orqestra's salary fields are yearly. */
 function annualSalary(band: LeverMoney | null | undefined) {
   if (!band || !isAnnual(band.interval)) return {};
   return { salaryMin: num(band.min), salaryMax: num(band.max), salaryCurrency: band.currency?.trim() || null };
 }
 
-/** "Pay: 22–28 USD per hour", for pay Source's yearly salary fields can't hold. */
+/** "Pay: 22–28 USD per hour", for pay Orqestra's yearly salary fields can't hold. */
 function payLine(min: unknown, max: unknown, currency: string | null | undefined, interval: string | null | undefined): string | null {
   const amounts = cleanList([num(min), num(max)].map((n) => (n == null ? null : String(n))));
   if (!amounts.length) return null;
@@ -860,7 +860,7 @@ function toPosting(p: LeverPosting, requisitionId: string | null): ImportedPosti
     ...(c.lists ?? []).map((l) => [l.text?.trim(), htmlToText(`<ul>${l.content ?? ''}</ul>`)].filter(Boolean).join('\n')),
     htmlToText(c.closingHtml) || c.closing?.trim(),
     htmlToText(p.salaryDescriptionHtml) || p.salaryDescription?.trim(),
-    // Hourly or monthly pay has no place in Source's yearly salary fields; keep it readable.
+    // Hourly or monthly pay has no place in Orqestra's yearly salary fields; keep it readable.
     band && !isAnnual(band.interval) ? payLine(band.min, band.max, band.currency, band.interval) : null,
   ]
     .filter(Boolean)
@@ -877,7 +877,7 @@ function toPosting(p: LeverPosting, requisitionId: string | null): ImportedPosti
     workplaceType: workplaceOf(p.workplaceType),
     description: description || null,
     ...annualSalary(band),
-    // Source has no teams; the team is kept as a tag.
+    // Orqestra has no teams; the team is kept as a tag.
     tags: cleanList([...(p.tags ?? []), categories.team]),
     confidential: p.confidentiality === 'confidential',
     requisitionExternalId: requisitionId,
@@ -969,7 +969,7 @@ function toOffer(o: LeverOffer, opportunityId: string, declinedAt: Date | null):
     applicationExternalId: opportunityId,
     status,
     jobTitle: scalar(field('job_title')) || null,
-    // Source shows an offer's salary as yearly.
+    // Orqestra shows an offer's salary as yearly.
     salaryAmount: annual ? amount : null,
     salaryCurrency: currency,
     equity: equity ? scalar(equity.value) || null : null,
@@ -1267,7 +1267,7 @@ export const leverProvider: ProviderModule = {
       if (!seen.live && seen.deleted === DELETED_ALARM) {
         ctx.warn(
           `The first ${DELETED_ALARM} Lever ${label} read were all marked as deleted, so none of them were imported. ` +
-            `If you can see these ${label} in Lever, contact Source support before relying on this import.`,
+            `If you can see these ${label} in Lever, contact Orqestra support before relying on this import.`,
         );
       }
       return true;
@@ -1438,7 +1438,7 @@ export const leverProvider: ProviderModule = {
               listRun<LeverRequisition>(ctx, cursor, '/requisitions', {}, true, async (r) => {
                 if (isUnlimited(r.headcountTotal)) {
                   ctx.warn(
-                    `Lever requisitions with unlimited headcount were imported with ${UNLIMITED_OPENINGS.toLocaleString('en-US')} openings, because Source has no unlimited setting`,
+                    `Lever requisitions with unlimited headcount were imported with ${UNLIMITED_OPENINGS.toLocaleString('en-US')} openings, because Orqestra has no unlimited setting`,
                   );
                 }
                 await ctx.load.requisition(toRequisition(r));
@@ -1536,7 +1536,7 @@ export const leverProvider: ProviderModule = {
           await each(ctx, note, async (n) => {
             if (skipDeleted(ctx, 'notes', n.deletedAt)) return;
             if (n.secret) {
-              ctx.warn('Skipped secret Lever notes: Source notes are visible to everyone who can see the application');
+              ctx.warn('Skipped secret Lever notes: Orqestra notes are visible to everyone who can see the application');
               return;
             }
             // A Lever note is a thread; each comment keeps its own author.

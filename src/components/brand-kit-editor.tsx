@@ -127,7 +127,7 @@ export function BrandKitEditor({ initial, logoFileId, orgName }: { initial: Bran
         </button>
         {!isDefaultBrand(brand) ? (
           <button type="button" disabled={pending} onClick={() => set(EMPTY_BRAND)} className={buttonClass({ variant: 'ghost' })}>
-            Use Source’s look
+            Use Orqestra’s look
           </button>
         ) : null}
         {justSaved && !changed ? <span className="text-sm text-ink-2">Saved</span> : null}
