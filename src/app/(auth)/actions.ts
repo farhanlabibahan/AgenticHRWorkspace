@@ -7,7 +7,6 @@ import bcrypt from 'bcryptjs';
 import { db } from '@/lib/db';
 import { signIn } from '@/lib/auth';
 import { safeRedirectPath } from '@/lib/safe-redirect';
-import { demoEnabled, ensureDemoOrg } from '@/server/demo';
 import {
   GOOGLE_CONTINUE_PROVIDER,
   googleAuthEnabled,
@@ -72,17 +71,6 @@ async function signsInWithGoogleOnly(rawEmail: string): Promise<boolean> {
     SELECT bool_and("passwordHash" IS NULL) AS "googleOnly"
     FROM "User" WHERE lower(email) = ${email} AND "deactivatedAt" IS NULL`;
   return row?.googleOnly === true;
-}
-
-/**
- * One-click demo sign-in (only when DEMO_MODE is on). Seeds an isolated demo
- * org on first use, rotates the demo user's password to a fresh random value,
- * then goes through the normal credentials flow — not an auth bypass.
- */
-export async function demoLogin(): Promise<void> {
-  if (!demoEnabled()) throw new Error('Demo mode is not enabled.');
-  const { email, password } = await ensureDemoOrg();
-  await signIn('credentials', { email, password, redirectTo: '/dashboard' });
 }
 
 // ---------- Continue with Google ----------

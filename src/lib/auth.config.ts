@@ -23,6 +23,8 @@ export const authConfig = {
       // MARKETING_ORIGIN set, next.config.ts hands both to the marketing app.
       // /demo signs a visitor in to the demo workspace (app/demo/route.ts).
       if (nextUrl.pathname === '/self-hosted') return true;
+      // Demo sign-in endpoints always answer, so you can switch roles while signed in.
+      if (nextUrl.pathname === '/demo' || nextUrl.pathname.startsWith('/demo/')) return true;
       if (nextUrl.pathname === '/' || nextUrl.pathname === '/demo') {
         if (auth?.user?.orgId) return Response.redirect(new URL('/dashboard', nextUrl));
         return true;

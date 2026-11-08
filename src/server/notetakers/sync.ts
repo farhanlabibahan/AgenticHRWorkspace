@@ -3,7 +3,7 @@ import type { TranscriptConnection } from '@prisma/client';
 import { db } from '@/lib/db';
 import type { SessionContext } from '@/lib/session';
 import { notetakerProvider } from '@/lib/notetaker-providers';
-import { DEMO_EMAIL } from '@/server/demo';
+import { DEMO_EMAIL } from '@/server/demo-accounts';
 import { addTranscriptTx } from '@/server/transcripts';
 import { createAdapter, MissingToolsError, type NotetakerAdapter, type ToolCaller } from '@/server/notetakers/adapters';
 import { withConnectionLock, lockInTransaction } from '@/server/notetakers/locks';

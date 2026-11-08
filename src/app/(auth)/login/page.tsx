@@ -4,10 +4,10 @@ import { AuthForm } from '@/components/auth-form';
 import { GoogleSignIn } from '@/components/google-auth';
 import { signInErrorMessage } from '@/lib/auth-errors';
 import { safeRedirectPath } from '@/lib/safe-redirect';
-import { demoEnabled } from '@/server/demo';
+import { demoEnabled } from '@/server/demo-accounts';
 import { googleAuthEnabled } from '@/server/google-auth';
 import { requestOrigin } from '@/server/request-origin';
-import { demoLogin, login } from '../actions';
+import { login } from '../actions';
 
 export const metadata = { title: 'Sign in · Source' };
 
@@ -48,19 +48,14 @@ export default async function LoginPage({
         ]}
       />
       {demoEnabled() ? (
-        <div className="mt-6">
-          <form action={demoLogin}>
-            <button
-              type="submit"
-              className={buttonClass({ variant: 'tonal', size: 'lg', className: 'w-full' })}
-            >
-              Explore the demo <span className="t-learn-arrow">→</span>
-            </button>
-          </form>
-          <p className="mt-2 text-xs text-ink-2">
-            One click into a sample workspace — seeded candidates, interviews, and an offer. No
-            account needed.
-          </p>
+        <div className="mt-6 flex flex-col gap-2">
+          <p className="text-xs text-ink-2">Try a sample workspace, no account needed:</p>
+          <a href="/demo/manager" className={buttonClass({ variant: 'tonal', size: 'lg', className: 'w-full' })}>
+            Demo: manager / recruiter <span aria-hidden>→</span>
+          </a>
+          <a href="/demo/employee" className={buttonClass({ variant: 'tonal', size: 'lg', className: 'w-full' })}>
+            Demo: employee <span aria-hidden>→</span>
+          </a>
         </div>
       ) : null}
       <p className="mt-6 text-sm text-ink-2">
