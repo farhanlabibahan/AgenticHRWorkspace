@@ -16,6 +16,6 @@ export const config = {
   // unsubscribe is a newsletter reader's own page; api/email/ takes the
   // email provider's bounce notifications (checked by signature).
   matcher: [
-    '/((?!api/auth|api/cron|api/v1|api/careers|api/logo|careers|portal|share|schedule|offer|unsubscribe|api/unsubscribe|api/email/|agencies|talent-network|extension|site-assets|oauth/|_next/static|_next/image|fonts|brand/|favicon.ico|apple-icon.png|manifest.webmanifest|help).*)',
+    '/((?!api/auth|api/cron|api/v1|api/careers|api/logo|careers|portal|share|schedule|offer|unsubscribe|api/unsubscribe|api/email/|agencies|talent-network|extension|site-assets|oauth/|_next/static|_next/image|fonts|brand/|favicon.ico|apple-icon.png|manifest.webmanifest|help|jobs|candidate).*)',
   ],
 };

@@ -27,6 +27,8 @@ export const authConfig = {
       if (nextUrl.pathname === '/demo' || nextUrl.pathname.startsWith('/demo/')) return true;
       // The help guide is public, so people can read it before signing in.
       if (nextUrl.pathname === '/help') return true;
+      // Candidate pages sign in with their own cookie (src/server/candidate-accounts.ts), not the company session.
+      if (nextUrl.pathname === '/jobs' || nextUrl.pathname.startsWith('/jobs/') || nextUrl.pathname.startsWith('/candidate')) return true;
       if (nextUrl.pathname === '/' || nextUrl.pathname === '/demo') {
         if (auth?.user?.orgId) return Response.redirect(new URL('/dashboard', nextUrl));
         return true;

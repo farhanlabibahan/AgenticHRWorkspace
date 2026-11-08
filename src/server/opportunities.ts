@@ -141,6 +141,19 @@ export async function moveStage(
         actorId: ctx.userId,
       },
     });
+    // A hire goes to the candidate's own "My jobs", across companies (once per opportunity).
+    if (toStage.type === 'HIRED' && opportunity.status !== 'HIRED' && opportunity.contact.candidateAccountId) {
+      await tx.employmentRecord.upsert({
+        where: { opportunityId: opportunity.id },
+        create: {
+          orgId: ctx.orgId,
+          candidateAccountId: opportunity.contact.candidateAccountId,
+          opportunityId: opportunity.id,
+          title: opportunity.posting?.title ?? 'Role',
+        },
+        update: {},
+      });
+    }
     await emitEvent(tx, {
       orgId: ctx.orgId,
       ...actorOf(ctx),

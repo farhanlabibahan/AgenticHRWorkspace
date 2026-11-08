@@ -83,9 +83,11 @@ export async function submitApplication(input: ApplicationInput) {
       where: { orgId: org.id, emails: { has: email } },
     });
     if (!contact) {
+      const account = await tx.candidateAccount.findUnique({ where: { email }, select: { id: true } });
       contact = await tx.contact.create({
         data: {
           orgId: org.id,
+          candidateAccountId: account?.id ?? null,
           name: capName(input.name.trim()),
           location: input.location?.trim() || null,
           // Only the typed address: emails are the key for dedupe and the
@@ -105,6 +107,13 @@ export async function submitApplication(input: ApplicationInput) {
         subjectId: contact.id,
         payload: { name: contact.name },
       });
+    }
+
+    if (!contact.candidateAccountId) {
+      const account = await tx.candidateAccount.findUnique({ where: { email }, select: { id: true } });
+      if (account) {
+        contact = await tx.contact.update({ where: { id: contact.id }, data: { candidateAccountId: account.id } });
+      }
     }
 
     const opportunity = await tx.opportunity.create({

@@ -98,6 +98,7 @@ model Organization {
   transcriptConnections TranscriptConnection[]
   externalMeetings ExternalMeeting[]
   attendance       Attendance[]
+  employments      EmploymentRecord[]
   leaveTypes       LeaveType[]
   leaveRequests    LeaveRequest[]
   agentRuns        AgentRun[]
@@ -199,6 +200,10 @@ model Contact {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
+  // The candidate account this contact belongs to (matched by email), so one login sees every application.
+  candidateAccountId String?
+  candidateAccount   CandidateAccount? @relation(fields: [candidateAccountId], references: [id], onDelete: SetNull)
+
   opportunities Opportunity[]
   consents      ConsentRecord[]
   pools         TalentPool[]  @relation("PoolMembers")
@@ -206,6 +211,7 @@ model Contact {
   caseStudies   CaseStudy[]
 
   @@index([orgId])
+  @@index([candidateAccountId])
   @@index([orgId, createdAt, id], map: "Contact_list_created_idx") // contacts list, newest first (keyset)
   @@index([orgId, name, id], map: "Contact_name_sort_idx") // pipeline sorted by name
   @@index([resumeFileId]) // resume-text backfill writes by file; file deletes null it
@@ -1464,4 +1470,37 @@ model AgentRun {
   finishedAt DateTime       @default(now())
 
   @@index([orgId, agent, startedAt])
+}
+
+// ---------- Candidate accounts (one login across every company) ----------
+
+// A person who applies to jobs. Separate from company users: a candidate
+// signs in to /candidate and sees only their own applications, interviews and
+// jobs. Matched to contacts by email in each company.
+model CandidateAccount {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  contacts     Contact[]
+  employments  EmploymentRecord[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// Created when a company hires a candidate. Shows under "My jobs" in the
+// candidate's own account. One record per hired opportunity.
+model EmploymentRecord {
+  id                 String           @id @default(uuid())
+  orgId              String
+  org                Organization     @relation(fields: [orgId], references: [id])
+  candidateAccountId String
+  candidateAccount   CandidateAccount @relation(fields: [candidateAccountId], references: [id], onDelete: Cascade)
+  opportunityId      String           @unique
+  title              String
+  startedAt          DateTime         @default(now())
+  createdAt          DateTime         @default(now())
+
+  @@index([candidateAccountId])
+  @@index([orgId])
 }
