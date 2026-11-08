@@ -8,6 +8,7 @@ import { demoResumesSeeded, seedDemoResumes, type DemoResume } from '@/server/de
 import { criteriaSeededWhere, seedMatchCriteria, seedSampleHighlights } from '@/server/demo-criteria';
 import { DEMO_SCREEN_TITLE, seedTranscriptInsights } from '@/server/demo-insights';
 import { demoWorkSeeded, seedDemoWork } from '@/server/demo-work';
+import { seedHrDemo } from '@/server/hr-demo';
 
 /**
  * Demo mode — a one-click "Explore the demo" login, gated behind DEMO_MODE.
@@ -118,6 +119,7 @@ export async function ensureDemoOrg(): Promise<{ email: string; password: string
       }
     }
     await seedResumes(existing.orgId);
+    await seedHr(existing.orgId);
     return { email: DEMO_EMAIL, password };
   }
 
@@ -504,7 +506,17 @@ export async function ensureDemoOrg(): Promise<{ email: string; password: string
   });
 
   await seedResumes(orgId);
+  await seedHr(orgId);
   return { email: DEMO_EMAIL, password };
+}
+
+/** Leave types, attendance and leave requests for the demo; never blocks signing in. */
+async function seedHr(orgId: string) {
+  try {
+    await seedHrDemo(orgId);
+  } catch (error) {
+    console.error('[demo] hr', error);
+  }
 }
 
 /** Resume files and their parsed profiles for the filled-out candidates; never blocks signing in. */

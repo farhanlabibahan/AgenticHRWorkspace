@@ -97,6 +97,10 @@ model Organization {
   shareLinks       ShareLink[]
   transcriptConnections TranscriptConnection[]
   externalMeetings ExternalMeeting[]
+  attendance       Attendance[]
+  leaveTypes       LeaveType[]
+  leaveRequests    LeaveRequest[]
+  agentRuns        AgentRun[]
 }
 
 // Grouping for companies hiring across teams (Engineering, Design…)
@@ -156,6 +160,9 @@ model User {
   resolvedApprovals  ApprovalRequest[]    @relation("ApprovalResolver")
   referrals          Referral[]
   transcriptConnections TranscriptConnection[]
+  attendance         Attendance[]
+  leaveRequests      LeaveRequest[]        @relation("LeaveRequester")
+  reviewedLeaves     LeaveRequest[]        @relation("LeaveReviewer")
 
   @@unique([orgId, email])
   // One Google account can sign in to several workspaces, as one user in each.
@@ -1361,3 +1368,100 @@ model CaseStudy {
   @@index([orgId])
 }
 
+
+// ---------- HR operations: attendance, leave, AI agent runs ----------
+
+// One row per person per work day. Times are UTC instants; the work day is the
+// calendar date in the org's policy timezone (src/lib/hr-policy.ts).
+model Attendance {
+  id        String       @id @default(uuid())
+  orgId     String
+  org       Organization @relation(fields: [orgId], references: [id])
+  userId    String
+  user      User         @relation(fields: [userId], references: [id])
+  workDate  DateTime     @db.Date
+  checkInAt  DateTime?
+  checkOutAt DateTime?
+  source    String       @default("web")
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@unique([userId, workDate])
+  @@index([orgId, workDate])
+}
+
+model LeaveType {
+  id          String       @id @default(uuid())
+  orgId       String
+  org         Organization @relation(fields: [orgId], references: [id])
+  name        String
+  annualDays  Int          @default(0)
+  paid        Boolean      @default(true)
+  requests    LeaveRequest[]
+  createdAt   DateTime     @default(now())
+
+  @@unique([orgId, name])
+}
+
+enum LeaveState {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+model LeaveRequest {
+  id          String       @id @default(uuid())
+  orgId       String
+  org         Organization @relation(fields: [orgId], references: [id])
+  userId      String
+  requester   User         @relation("LeaveRequester", fields: [userId], references: [id])
+  leaveTypeId String
+  leaveType   LeaveType    @relation(fields: [leaveTypeId], references: [id])
+  startDate   DateTime     @db.Date
+  endDate     DateTime     @db.Date
+  days        Int
+  reason      String?
+  state       LeaveState   @default(PENDING)
+  reviewerId  String?
+  reviewer    User?        @relation("LeaveReviewer", fields: [reviewerId], references: [id])
+  reviewedAt  DateTime?
+  reviewNote  String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([orgId, state])
+  @@index([userId, startDate])
+  @@index([orgId, startDate, endDate])
+}
+
+enum AgentKey {
+  ATTENDANCE
+  LEAVE
+  BRIEFING
+}
+
+enum AgentRunStatus {
+  SUCCEEDED
+  FAILED
+}
+
+// Execution history for the rule-based HR agents. Every run is recorded,
+// including failures, so the monitor can show retries and errors.
+model AgentRun {
+  id         String         @id @default(uuid())
+  orgId      String
+  org        Organization   @relation(fields: [orgId], references: [id])
+  agent      AgentKey
+  status     AgentRunStatus
+  trigger    String         @default("manual")
+  summary    String         @default("")
+  findings   Json?
+  error      String?
+  attempts   Int            @default(1)
+  durationMs Int            @default(0)
+  startedAt  DateTime       @default(now())
+  finishedAt DateTime       @default(now())
+
+  @@index([orgId, agent, startedAt])
+}

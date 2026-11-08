@@ -5,7 +5,10 @@ import { SourceLockup } from '@/components/powered-by';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
+  Bot,
   BarChart3,
+  CalendarRange,
+  Clock,
   Briefcase,
   CalendarDays,
   Inbox,
@@ -39,6 +42,9 @@ const nav = [
   { href: '/interviews', label: 'Interviews', icon: CalendarDays },
   { href: '/tasks', label: 'Tasks', icon: ListTodo },
   { href: '/newsletters', label: 'Newsletters', icon: Newspaper },
+  { href: '/attendance', label: 'Attendance', icon: Clock },
+  { href: '/leave', label: 'Leave', icon: CalendarRange },
+  { href: '/agents', label: 'AI agents', icon: Bot },
   { href: '/reports', label: 'Reports', icon: BarChart3 },
   { href: '/settings', label: 'Settings', icon: Settings },
 ];
