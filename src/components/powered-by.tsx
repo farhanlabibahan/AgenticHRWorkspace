@@ -5,12 +5,11 @@ import { cn } from '@/lib/utils';
  * The Orqestra logo: the orb mark from public/brand beside the name.
  */
 export function SourceLockup({ href, className }: { href?: string; className?: string }) {
-  // The orb (public/brand/source-mark.svg, no lettering) with the name set as
-  // live text beside it, so the wordmark can change without redrawing the art.
+  // The Orqestra mark (the orbit and sparkle, /brand/orqestra) beside the name.
   const art = (
-    <span className="inline-flex items-center gap-2">
-      {/* eslint-disable-next-line @next/next/no-img-element -- a static SVG, drawn cell for cell */}
-      <img src="/brand/source-mark.svg" alt="" width={32} height={32} className="size-8 shrink-0" />
+    <span className="inline-flex items-center gap-2.5">
+      {/* eslint-disable-next-line @next/next/no-img-element -- a static PNG logo */}
+      <img src="/brand/orqestra/logo-128.png" alt="" width={56} height={56} className="size-14 shrink-0 object-contain -my-3" />
       <span className="text-[18px] font-semibold tracking-[-0.02em] text-ink">Orqestra</span>
     </span>
   );
