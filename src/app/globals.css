@@ -13,29 +13,29 @@
   --font-mono: var(--font-fragment-mono), ui-monospace, Menlo, Consolas, monospace;
 
   /* Surfaces */
-  --color-sheet: #fdfcfc; /* marketing page ground (after elevenlabs.io); cards on it use canvas */
-  --color-canvas: #f5f4f2;
-  --color-surface: #ffffff;
-  --color-recessed: #edece9;
-  --color-muted: #f2f1ef;
+  --color-sheet: #ececea; /* marketing page ground (after elevenlabs.io); cards on it use canvas */
+  --color-canvas: #e6e6e6;
+  --color-surface: #f6f6f4;
+  --color-recessed: #d8d9d3;
+  --color-muted: #dcdcd6;
 
   /* Ink */
-  --color-ink: #0a0a0a;
-  --color-ink-2: #6b6a67;
-  --color-ink-3: #9b9a96;
-  --color-line: rgb(10 10 10 / 0.07);
-  --color-line-strong: rgb(10 10 10 / 0.14);
+  --color-ink: #1d2419;
+  --color-ink-2: #55604d;
+  --color-ink-3: #7f8878;
+  --color-line: rgb(29 36 25 / 0.10);
+  --color-line-strong: rgb(29 36 25 / 0.18);
 
   /* Brand: primary buttons. Ink unless an organization's brand kit sets a
      color on the pages candidates see (lib/brand.ts). */
-  --color-brand: var(--color-ink);
-  --color-on-brand: var(--color-canvas);
+  --color-brand: #404e3b;
+  --color-on-brand: #ffffff;
 
   /* Status — small doses: text, 6px dots, /10 tints */
-  --color-positive: #3f8f5f;
-  --color-caution: #b7791f;
-  --color-critical: #d14d41;
-  --color-info: #4f7fb8;
+  --color-positive: #3f7d52;
+  --color-caution: #a86f1c;
+  --color-critical: #b8402f;
+  --color-info: #6c8480;
 
   /* Type scale — UI band (fine steps) + display band (large steps), 4px line grid */
   --text-2xs: 11px;
