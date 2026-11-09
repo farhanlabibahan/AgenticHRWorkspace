@@ -11,7 +11,7 @@ export function SourceLockup({ href, className }: { href?: string; className?: s
     <span className="inline-flex items-center gap-2">
       {/* eslint-disable-next-line @next/next/no-img-element -- a static SVG, drawn cell for cell */}
       <img src="/brand/source-mark.svg" alt="" width={32} height={32} className="size-8 shrink-0" />
-      <span className="text-[17px] font-semibold tracking-[-0.02em] text-ink">Orqestra</span>
+      <span className="text-[18px] font-semibold tracking-[-0.02em] text-ink">Orqestra</span>
     </span>
   );
   return href ? (

@@ -20,9 +20,9 @@
   --color-muted: #dcdcd6;
 
   /* Ink */
-  --color-ink: #1d2419;
-  --color-ink-2: #55604d;
-  --color-ink-3: #7f8878;
+  --color-ink: #000000;
+  --color-ink-2: #000000;
+  --color-ink-3: #000000;
   --color-line: rgb(29 36 25 / 0.10);
   --color-line-strong: rgb(29 36 25 / 0.18);
 
@@ -38,37 +38,37 @@
   --color-info: #6c8480;
 
   /* Type scale — UI band (fine steps) + display band (large steps), 4px line grid */
-  --text-2xs: 11px;
-  --text-2xs--line-height: 16px;
-  --text-xs: 12px;
-  --text-xs--line-height: 16px;
-  --text-sm: 13px;
-  --text-sm--line-height: 20px;
-  --text-base: 14px;
-  --text-base--line-height: 20px;
-  --text-md: 16px;
-  --text-md--line-height: 24px;
+  --text-2xs: 12px;
+  --text-2xs--line-height: 17px;
+  --text-xs: 13px;
+  --text-xs--line-height: 18px;
+  --text-sm: 14px;
+  --text-sm--line-height: 21px;
+  --text-base: 15px;
+  --text-base--line-height: 22px;
+  --text-md: 17px;
+  --text-md--line-height: 25px;
   --text-md--letter-spacing: -0.005em;
-  --text-lg: 18px;
-  --text-lg--line-height: 24px;
+  --text-lg: 19px;
+  --text-lg--line-height: 27px;
   --text-lg--letter-spacing: -0.01em;
-  --text-xl: 20px;
-  --text-xl--line-height: 28px;
+  --text-xl: 22px;
+  --text-xl--line-height: 30px;
   --text-xl--letter-spacing: -0.015em;
-  --text-2xl: 24px;
-  --text-2xl--line-height: 32px;
+  --text-2xl: 26px;
+  --text-2xl--line-height: 34px;
   --text-2xl--letter-spacing: -0.02em;
-  --text-3xl: 32px;
-  --text-3xl--line-height: 36px;
+  --text-3xl: 34px;
+  --text-3xl--line-height: 38px;
   --text-3xl--letter-spacing: -0.025em;
-  --text-4xl: 44px;
-  --text-4xl--line-height: 48px;
+  --text-4xl: 46px;
+  --text-4xl--line-height: 50px;
   --text-4xl--letter-spacing: -0.03em;
-  --text-5xl: 56px;
-  --text-5xl--line-height: 60px;
+  --text-5xl: 58px;
+  --text-5xl--line-height: 62px;
   --text-5xl--letter-spacing: -0.035em;
-  --text-6xl: 72px;
-  --text-6xl--line-height: 72px;
+  --text-6xl: 74px;
+  --text-6xl--line-height: 76px;
   --text-6xl--letter-spacing: -0.04em;
 
   /* Radii — pill = press, field = type, card = contain */
@@ -119,9 +119,9 @@
   --color-surface: #222b1f;
   --color-recessed: #151b13;
   --color-muted: #2b3527;
-  --color-ink: #eef0e8;
-  --color-ink-2: #aab5a2;
-  --color-ink-3: #77826f;
+  --color-ink: #ffffff;
+  --color-ink-2: #ffffff;
+  --color-ink-3: #ffffff;
   --color-line: rgb(238 240 232 / 0.09);
   --color-line-strong: rgb(238 240 232 / 0.16);
   --color-positive: #7fb38d;
