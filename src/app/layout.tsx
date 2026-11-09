@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 // Mobile browser chrome matches the canvas token (docs/09 §2).
-export const viewport: Viewport = { themeColor: '#f5f4f2' };
+export const viewport: Viewport = { themeColor: '#e6e6e6' };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

@@ -784,7 +784,7 @@ function StageProgress({
 }) {
   const at = status === 'HIRED' ? stages.length - 1 : stages.findIndex((s) => s.id === stageId);
   if (stages.length < 2 || at < 0) return null;
-  const fill = status === 'HIRED' ? 'bg-positive' : status === 'ARCHIVED' ? 'bg-ink-3' : 'bg-ink';
+  const fill = status === 'HIRED' ? 'bg-positive' : status === 'ARCHIVED' ? 'bg-ink-3' : 'bg-brand';
   return (
     <div
       role="img"

@@ -58,7 +58,7 @@ export function OnboardingCard({ steps }: { steps: OnboardingStep[] }) {
             <span
               className={cn(
                 'mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full',
-                s.done ? 'bg-ink text-canvas' : 'bg-surface',
+                s.done ? 'bg-brand text-on-brand' : 'bg-surface',
               )}
             >
               {s.done ? <Check size={12} /> : null}

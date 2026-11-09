@@ -138,7 +138,7 @@ export function Sidebar({
           {pill ? (
             <span
               aria-hidden
-              className="absolute inset-x-3 top-0 rounded-full bg-surface transition-[transform,height] duration-[var(--duration-fast)] ease-[var(--ease-smooth)]"
+              className="absolute inset-x-3 top-0 rounded-full bg-brand transition-[transform,height] duration-[var(--duration-fast)] ease-[var(--ease-smooth)]"
               style={{ height: pill.h, transform: `translateY(${pill.y}px)` }}
             />
           ) : null}
@@ -160,9 +160,9 @@ export function Sidebar({
                 className={cn(
                   'relative flex h-9 shrink-0 items-center gap-3 rounded-full px-3.5 text-sm transition-colors duration-[var(--duration-fast)] ease-[var(--ease-smooth)]',
                   active || pending
-                    ? 'font-medium text-ink'
+                    ? 'font-medium text-on-brand'
                     : 'text-ink-2 hover:bg-ink/[0.04] hover:text-ink',
-                  active && !pill && 'bg-surface',
+                  active && !pill && 'bg-brand',
                 )}
               >
                 <Icon

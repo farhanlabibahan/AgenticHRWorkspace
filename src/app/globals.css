@@ -112,22 +112,22 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 .dark {
-  --color-brand: var(--color-ink);
-  --color-on-brand: var(--color-canvas);
-  --color-sheet: #0a0a09;
-  --color-canvas: #0f0f0e;
-  --color-surface: #1a1a19;
-  --color-recessed: #232321;
-  --color-muted: #262624;
-  --color-ink: #f5f4f2;
-  --color-ink-2: #a3a29e;
-  --color-ink-3: #6b6a67;
-  --color-line: rgb(255 255 255 / 0.08);
-  --color-line-strong: rgb(255 255 255 / 0.14);
-  --color-positive: #5fb482;
+  --color-brand: #7b9669;
+  --color-on-brand: #111710;
+  --color-sheet: #151b13;
+  --color-canvas: #1a2117;
+  --color-surface: #222b1f;
+  --color-recessed: #151b13;
+  --color-muted: #2b3527;
+  --color-ink: #eef0e8;
+  --color-ink-2: #aab5a2;
+  --color-ink-3: #77826f;
+  --color-line: rgb(238 240 232 / 0.09);
+  --color-line-strong: rgb(238 240 232 / 0.16);
+  --color-positive: #7fb38d;
   --color-caution: #d9a441;
   --color-critical: #ec7064;
-  --color-info: #7aa5d8;
+  --color-info: #6c8480;
 }
 
 /* Marketing hero wash — a cool breath fading into the canvas */

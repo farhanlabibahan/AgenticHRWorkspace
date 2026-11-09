@@ -35,7 +35,7 @@ export function Switch({
       }}
       className={cn(
         'relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-[var(--duration-quick)] ease-[var(--ease-smooth)] outline-none focus-visible:ring-2 focus-visible:ring-line-strong focus-visible:ring-offset-2 disabled:cursor-default disabled:opacity-40',
-        checked ? 'bg-ink' : 'bg-recessed',
+        checked ? 'bg-brand' : 'bg-recessed',
       )}
       style={{ '--toggle-travel': '16px' } as React.CSSProperties}
     >

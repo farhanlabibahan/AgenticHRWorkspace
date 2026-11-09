@@ -12,8 +12,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'The ATS built for the age of AI.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#F5F4F2',
-    theme_color: '#F5F4F2',
+    background_color: '#E6E6E6',
+    theme_color: '#404E3B',
     icons: [
       { src: '/brand/favicon/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
       { src: '/brand/favicon/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },

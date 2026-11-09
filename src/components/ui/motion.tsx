@@ -191,7 +191,7 @@ export function Rise({
 export function SuccessCheck({ size = 16, className }: { size?: number; className?: string }) {
   return (
     <span
-      className={cn('t-success inline-flex items-center justify-center rounded-full bg-ink text-canvas', className)}
+      className={cn('t-success inline-flex items-center justify-center rounded-full bg-brand text-on-brand', className)}
       style={{ width: size, height: size }}
       aria-hidden
     >

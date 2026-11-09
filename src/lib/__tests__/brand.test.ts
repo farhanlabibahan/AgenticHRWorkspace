@@ -16,7 +16,7 @@ describe('readBrand', () => {
 
 describe('colors', () => {
   it('puts near-black on light colors and white on dark ones', () => {
-    expect(textOn('#ffd400')).toBe('#0a0a0a');
+    expect(textOn('#ffd400')).toBe('#1d2419');
     expect(textOn('#1d4ed8')).toBe('#ffffff');
     expect(contrast('#000000', '#ffffff')).toBeCloseTo(21, 0);
   });
@@ -53,8 +53,8 @@ describe('brandVars', () => {
 
   it('keeps buttons ink on a custom background without a brand color', () => {
     const vars = brandVars({ ...EMPTY_BRAND, background: '#0b1220' });
-    expect(vars['--color-ink']).toBe('#f5f4f2');
-    expect(vars['--color-brand']).toBe('#f5f4f2');
+    expect(vars['--color-ink']).toBe('#eef0e8');
+    expect(vars['--color-brand']).toBe('#eef0e8');
     expect(vars['--color-on-brand']).toBe('#0b1220');
   });
 });
