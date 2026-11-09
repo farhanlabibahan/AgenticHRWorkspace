@@ -49,3 +49,4 @@ deploy/storybook/dist
 # brand asset generator venv (see public/brand/README.md)
 /.venv-brand
 __pycache__/
+prisma/schema.generated.prisma

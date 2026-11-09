@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { signOut } from '@/lib/auth';
+import { signOutAction } from './sign-out-action';
 import { getAuthSession, getOrgNav } from '@/lib/session';
 import { readOrgNavCookie } from '@/lib/org-nav-cookie';
 import { Sidebar } from '@/components/sidebar';
@@ -36,11 +36,6 @@ export default async function AppLayout({
   const org = fetched ?? fromJwt ?? fromCookie;
   if (org && !org.onboardedAt) redirect('/onboarding');
 
-  async function handleSignOut() {
-    'use server';
-    await signOut({ redirectTo: '/login' });
-  }
-
   return (
     // DrawerHost holds the candidate drawer for every page, so it can open on
     // the click and slide out on any exit (see drawer-host.tsx).
@@ -49,7 +44,7 @@ export default async function AppLayout({
       <Sidebar
         user={{ name: session.user.name ?? '', email: session.user.email ?? '' }}
         org={{ name: org?.name ?? 'Workspace', logoFileId: org?.logoFileId ?? null }}
-        signOutAction={handleSignOut}
+        signOutAction={signOutAction}
         aiEnabled={aiConfigured()}
       />
       {fetched ? (
