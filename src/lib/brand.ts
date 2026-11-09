@@ -87,7 +87,7 @@ export function contrast(a: string, b: string): number {
   return (hi + 0.05) / (lo + 0.05);
 }
 
-const INK = '#1d2419';
+const INK = '#000000';
 const PAPER = '#ffffff';
 
 /** Near-black or white, whichever reads better on `hex`. */
@@ -99,7 +99,7 @@ export const textOn = (hex: string) => (contrast(hex, INK) >= contrast(hex, PAPE
  * of 4.5:1, it's pure black or white, and one of them always reaches it.
  */
 export function palette(background: string) {
-  const preferred = textOn(background) === INK ? INK : '#eef0e8';
+  const preferred = textOn(background) === INK ? INK : '#ffffff';
   const ink =
     contrast(preferred, background) >= 4.5
       ? preferred
@@ -181,6 +181,6 @@ export function brandVars(brand: Brand, fontVariable?: string): Record<string, s
 /** Why the brand color may be hard to see on the page, or null when it reads fine. */
 export function brandColorWarning(brand: Brand): string | null {
   if (!brand.color) return null;
-  const page = brand.background ?? '#e6e6e6';
+  const page = brand.background ?? '#ffffff';
   return contrast(brand.color, page) < 1.6 ? 'Buttons in this color will be hard to see on the background.' : null;
 }

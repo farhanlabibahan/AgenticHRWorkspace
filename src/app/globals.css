@@ -12,30 +12,29 @@
     'Segoe UI', Roboto, sans-serif;
   --font-mono: var(--font-fragment-mono), ui-monospace, Menlo, Consolas, monospace;
 
-  /* Surfaces */
-  --color-sheet: #ececea; /* marketing page ground (after elevenlabs.io); cards on it use canvas */
-  --color-canvas: #e6e6e6;
-  --color-surface: #f6f6f4;
-  --color-recessed: #d8d9d3;
-  --color-muted: #dcdcd6;
+  /* Surfaces: white page, cream cards, mint fields (Emerald & Cream palette) */
+  --color-sheet: #ffffff;
+  --color-canvas: #ffffff;
+  --color-surface: #f7f6f1;
+  --color-recessed: #e6f0e9;
+  --color-muted: #eef4f0;
 
-  /* Ink */
+  /* Ink: black text */
   --color-ink: #000000;
   --color-ink-2: #000000;
   --color-ink-3: #000000;
-  --color-line: rgb(29 36 25 / 0.10);
-  --color-line-strong: rgb(29 36 25 / 0.18);
+  --color-line: rgb(15 61 52 / 0.12);
+  --color-line-strong: rgb(15 61 52 / 0.22);
 
-  /* Brand: primary buttons. Ink unless an organization's brand kit sets a
-     color on the pages candidates see (lib/brand.ts). */
-  --color-brand: #404e3b;
+  /* Brand: deep emerald primary buttons, white text on them */
+  --color-brand: #0f3d34;
   --color-on-brand: #ffffff;
 
-  /* Status — small doses: text, 6px dots, /10 tints */
-  --color-positive: #3f7d52;
-  --color-caution: #a86f1c;
+  /* Status: emerald for good, gold for caution (darkened for legibility), brick for critical */
+  --color-positive: #134e43;
+  --color-caution: #8a6a2c;
   --color-critical: #b8402f;
-  --color-info: #6c8480;
+  --color-info: #134e43;
 
   /* Type scale — UI band (fine steps) + display band (large steps), 4px line grid */
   --text-2xs: 12px;
@@ -112,22 +111,22 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 .dark {
-  --color-brand: #7b9669;
-  --color-on-brand: #111710;
-  --color-sheet: #151b13;
-  --color-canvas: #1a2117;
-  --color-surface: #222b1f;
-  --color-recessed: #151b13;
-  --color-muted: #2b3527;
+  --color-brand: #c8a96a;
+  --color-on-brand: #0f3d34;
+  --color-sheet: #0b1f1a;
+  --color-canvas: #0f2a24;
+  --color-surface: #143a32;
+  --color-recessed: #0b1f1a;
+  --color-muted: #1b4a40;
   --color-ink: #ffffff;
   --color-ink-2: #ffffff;
   --color-ink-3: #ffffff;
-  --color-line: rgb(238 240 232 / 0.09);
-  --color-line-strong: rgb(238 240 232 / 0.16);
-  --color-positive: #7fb38d;
-  --color-caution: #d9a441;
+  --color-line: rgb(230 240 233 / 0.12);
+  --color-line-strong: rgb(230 240 233 / 0.22);
+  --color-positive: #7fc7a4;
+  --color-caution: #e0bf7a;
   --color-critical: #ec7064;
-  --color-info: #6c8480;
+  --color-info: #7fc7a4;
 }
 
 /* Marketing hero wash — a cool breath fading into the canvas */

@@ -5,8 +5,8 @@ import {
   Bot,
   Briefcase,
   CalendarCheck,
-  CalendarRange,
   CalendarDays,
+  CalendarRange,
   Clock,
   Home,
   Inbox,
@@ -15,265 +15,360 @@ import {
   Newspaper,
   Search,
   Settings,
+  Trophy,
   UserPlus,
   Users,
+  UserCircle,
 } from 'lucide-react';
 import { SourceLockup } from '@/components/powered-by';
-import { surface } from '@/components/form-controls';
-import { Badge, type Tone } from '@/components/ui/primitives';
 import { HR_POLICY } from '@/lib/hr-policy';
 
 export const metadata = { title: 'Help · Orqestra' };
 
-type Item = { icon: LucideIcon; name: string; href: string; what: string; who?: string };
+type Feature = {
+  icon: LucideIcon;
+  name: string;
+  what: string;
+  steps: string[];
+  who: string;
+};
 
-const NAV: { title: string; items: Item[] }[] = [
+type Section = { id: string; title: string; intro: string; features: Feature[] };
+
+const SECTIONS: Section[] = [
   {
-    title: 'Overview',
-    items: [
-      { icon: Home, name: 'Dashboard', href: '/dashboard', what: 'Your starting point: a short setup checklist, your pending approvals and upcoming interviews.' },
-      { icon: Search, name: 'Search', href: '/search', what: 'Find any candidate, contact, note or transcript. Ask AI answers questions across them, when AI is connected.' },
-      { icon: Inbox, name: 'Review', href: '/review', what: 'Things waiting for you to look at: new applications and meetings to check.' },
+    id: 'company',
+    title: 'For companies: recruiters and managers',
+    intro: 'These pages are for the people who hire and manage the team. They sit inside the signed-in app.',
+    features: [
+      {
+        icon: Home,
+        name: 'Dashboard',
+        what: 'Your home page. It shows a setup checklist, what needs your approval, and upcoming interviews.',
+        steps: ['Sign in and you land here.', 'Work through the checklist to set up your workspace.'],
+        who: 'Everyone',
+      },
+      {
+        icon: Briefcase,
+        name: 'Postings (open roles)',
+        what: 'The jobs you are hiring for. A role stays private while it is a Draft. Once you publish it, it appears on the public job board.',
+        steps: [
+          'Click Postings, then New posting.',
+          'Enter a title, location, workplace type and pay, and add a description.',
+          'Click Create draft. Open the role and click Publish when it is ready.',
+        ],
+        who: 'Recruiters and managers',
+      },
+      {
+        icon: Kanban,
+        name: 'Pipeline',
+        what: 'Every candidate, grouped by stage such as Applied, Screen, Offer and Hired. This is where you move people forward.',
+        steps: [
+          'Click Pipeline and choose a stage tab.',
+          'Open a candidate and use their stage dropdown to move them on.',
+          'Moving someone to Hired records the hire. If they have a candidate account, the job appears in their My jobs.',
+        ],
+        who: 'Recruiters and managers',
+      },
+      {
+        icon: Users,
+        name: 'Contacts',
+        what: 'Everyone in your system: applicants, referrals and people you have spoken to. One person can apply to several roles.',
+        steps: ['Click Contacts to search or filter.', 'Click New candidate to add someone by hand.'],
+        who: 'Recruiters and managers',
+      },
+      {
+        icon: CalendarDays,
+        name: 'Interviews',
+        what: 'Scheduled, completed and cancelled interviews, with who is on the panel. Each panellist then submits a scorecard with a rating and notes.',
+        steps: [
+          'Open a candidate and add an interview from their profile.',
+          'Pick the time, the panel and the place or video link.',
+          'After the interview, each panellist submits a scorecard.',
+        ],
+        who: 'Recruiters and interviewers',
+      },
+      {
+        icon: UserPlus,
+        name: 'Referrals',
+        what: 'Suggest someone you know for an open role. The referral goes into the pipeline, and you can see where they are.',
+        steps: ['Click Referrals and enter the person’s name and email.', 'Choose the role and add a short note on why they fit.'],
+        who: 'Everyone',
+      },
+      {
+        icon: ListTodo,
+        name: 'Tasks',
+        what: 'Small to-dos on candidates, such as “call back” or “send feedback”. Overdue tasks show first.',
+        steps: ['Open a candidate and add a task, with an optional due date.', 'Check Tasks each morning.'],
+        who: 'Everyone',
+      },
+      {
+        icon: Inbox,
+        name: 'Review',
+        what: 'Things waiting for you to look at, such as new applications and meeting notes.',
+        steps: ['Click Review and work down the list.'],
+        who: 'Recruiters and managers',
+      },
+      {
+        icon: Search,
+        name: 'Search',
+        what: 'Find any candidate, contact, note or interview transcript from one box.',
+        steps: ['Click Search and type a name, a role, or a word from a note.'],
+        who: 'Everyone',
+      },
+      {
+        icon: Newspaper,
+        name: 'Newsletters',
+        what: 'Send an email update to people who asked to hear from you.',
+        steps: ['Click Newsletters and write a new one.', 'Choose who gets it, then send.'],
+        who: 'Recruiters and managers',
+      },
+      {
+        icon: BarChart3,
+        name: 'Reports',
+        what: 'Charts about hiring: how many applied, how long each stage takes, and where candidates drop out.',
+        steps: ['Click Reports and pick the one you want.'],
+        who: 'Managers and admins',
+      },
     ],
   },
   {
-    title: 'Hiring',
-    items: [
-      { icon: Kanban, name: 'Pipeline', href: '/pipeline', what: 'Candidates grouped by stage (for example Applied, Screen, Offer). Use a candidate’s stage dropdown to move them on.' },
-      { icon: Users, name: 'Contacts', href: '/contacts', what: 'Every person in your system, including candidates and people you have spoken to.' },
-      { icon: UserPlus, name: 'Referrals', href: '/referrals', what: 'Suggest someone you know for a role. You can see where they are in the pipeline.' },
-      { icon: Briefcase, name: 'Postings', href: '/postings', what: 'Open roles. A posting can be a Draft (not visible), Published (on your careers page) or Closed.' },
-      { icon: CalendarDays, name: 'Interviews', href: '/interviews', what: 'Scheduled, completed and canceled interviews, with the interviewers and their scorecards.' },
-      { icon: ListTodo, name: 'Tasks', href: '/tasks', what: 'Things to do on candidates. Overdue tasks are shown first.' },
-      { icon: Newspaper, name: 'Newsletters', href: '/newsletters', what: 'Send an email update to a list of subscribers.' },
+    id: 'people',
+    title: 'For your team: attendance, leave and agents',
+    intro: 'These pages are for everyone in the company, not only recruiters.',
+    features: [
+      {
+        icon: Clock,
+        name: 'Attendance',
+        what: `Record when you start and finish work. The day starts at ${HR_POLICY.workStart}, with a ${HR_POLICY.graceMinutes}-minute grace period before a check-in counts as late. Friday and Saturday are off days.`,
+        steps: [
+          'Click Attendance, then Check in when you start work.',
+          'Click Check out when you finish.',
+          'The team list shows who has checked in today.',
+        ],
+        who: 'Everyone',
+      },
+      {
+        icon: CalendarRange,
+        name: 'Leave',
+        what: 'Ask for time off and see how many days you have left. Weekends are not counted. An admin must approve every request.',
+        steps: [
+          'Click Leave and pick the type: Annual, Sick or Unpaid.',
+          'Choose the first and last day, and add a reason if you like.',
+          'Click Request leave. It shows as Pending until an admin decides.',
+        ],
+        who: 'Everyone (admins approve)',
+      },
+      {
+        icon: Bot,
+        name: 'AI agents',
+        what: 'Automatic checks that read your real records and list what needs a person. They never approve, reject or change anything, and every check is logged.',
+        steps: [
+          'Click AI agents to see the three checks and what they last found.',
+          'Admins can click Run now to refresh a check.',
+        ],
+        who: 'Everyone reads; admins run',
+      },
     ],
   },
   {
-    title: 'People and time',
-    items: [
-      { icon: Clock, name: 'Attendance', href: '/attendance', what: 'Check in and check out for your own day. The team list shows who is in today.', who: 'Everyone' },
-      { icon: CalendarRange, name: 'Leave', href: '/leave', what: 'Request time off, see your balance, and (for admins) approve or reject requests.', who: 'Everyone; approvals for admins' },
-      { icon: Bot, name: 'AI agents', href: '/agents', what: 'Automatic checks that read your records and report what needs a person. Admins can run them.', who: 'Everyone reads; admins run' },
+    id: 'candidate',
+    title: 'For candidates: find a job and track it',
+    intro: 'Candidates use one account for every company. You never need a company login.',
+    features: [
+      {
+        icon: UserCircle,
+        name: 'Create your account',
+        what: 'One email and password for the whole platform. Any applications you made before creating it are linked to it automatically.',
+        steps: [
+          'Click Create account on the home page, or open /candidate/signup.',
+          'Enter your name, email and a password of at least 8 characters.',
+        ],
+        who: 'Candidates',
+      },
+      {
+        icon: Search,
+        name: 'Find jobs',
+        what: 'Every open role from every company, in one list. Search by title or city, and filter by workplace and type.',
+        steps: ['Click Find jobs, or open /jobs.', 'Type in the search box or pick a filter, then click a role to read it.'],
+        who: 'Anyone',
+      },
+      {
+        icon: Briefcase,
+        name: 'Apply',
+        what: 'Send your application to a role. The company receives it with the name and email from your account.',
+        steps: [
+          'Open a role and read the description.',
+          'Sign in, add an optional note, and click Submit application.',
+          'You can apply once to each open role.',
+        ],
+        who: 'Candidates',
+      },
+      {
+        icon: CalendarCheck,
+        name: 'My applications and interviews',
+        what: 'See each role you applied to, its status, and any upcoming interviews with the time and place.',
+        steps: ['Sign in and open My jobs. Look at My applications and Upcoming interviews.'],
+        who: 'Candidates',
+      },
+      {
+        icon: Trophy,
+        name: 'My jobs',
+        what: 'When a company hires you, the job appears here with the company and start date. It stays in your account even if you later work for another company.',
+        steps: ['Sign in and open My jobs. Your hired roles are at the top.'],
+        who: 'Candidates',
+      },
     ],
   },
   {
-    title: 'Insights and settings',
-    items: [
-      { icon: BarChart3, name: 'Reports', href: '/reports', what: 'Charts and saved reports about hiring.' },
-      { icon: Settings, name: 'Settings', href: '/settings', what: 'Business information, hiring stages, email, team members and their roles, and integrations.', who: 'Admins for business, team and integrations' },
+    id: 'admin',
+    title: 'For admins: settings',
+    intro: 'Settings controls how the company runs. Only admins can change the business, team and integration sections.',
+    features: [
+      {
+        icon: Settings,
+        name: 'Settings',
+        what: 'Business information (name, logo, brand), hiring stages, email templates, team members and their roles, and integrations such as calendars and API keys.',
+        steps: [
+          'Click Settings and pick a section from the list at the top.',
+          'Team: invite people and choose their role. Admins can approve leave and run agents.',
+          'Hiring: rename or reorder the stages candidates move through.',
+        ],
+        who: 'Admins for business, team and integrations',
+      },
     ],
   },
 ];
 
-const STATUS: { label: string; tone?: Tone; meaning: string }[] = [
-  { label: 'In', tone: 'positive', meaning: 'You have checked in today, on time.' },
-  { label: 'Late', tone: 'caution', meaning: `You checked in after ${minutesToClock(parseHM(HR_POLICY.workStart) + HR_POLICY.graceMinutes)}. Late is only a note, not a mark against you.` },
-  { label: 'Not checked in', tone: 'caution', meaning: 'No check-in yet. After the start time and grace period, the Attendance agent lists this for review.' },
-  { label: 'Done', meaning: 'You have checked in and out for the day.' },
-  { label: 'No check-out', tone: 'critical', meaning: 'A past day that was never checked out. Someone should correct it.' },
-  { label: 'Off day', meaning: 'A weekend. No check-in is needed.' },
-  { label: 'Pending', tone: 'caution', meaning: 'A leave request waiting for an admin to decide.' },
-  { label: 'Approved', tone: 'positive', meaning: 'Leave was approved. The days count against your balance.' },
-  { label: 'Rejected', tone: 'critical', meaning: 'Leave was not approved. The days are not used.' },
+const STATUSES: { label: string; meaning: string }[] = [
+  { label: 'In', meaning: 'You checked in today, on time.' },
+  { label: 'Late', meaning: `You checked in after ${clock(parse(HR_POLICY.workStart) + HR_POLICY.graceMinutes)}. It is a note, not a penalty.` },
+  { label: 'Not checked in', meaning: 'No check-in yet today.' },
+  { label: 'Done', meaning: 'You checked in and out for the day.' },
+  { label: 'No check-out', meaning: 'A past day with no check-out. Someone should correct it.' },
+  { label: 'Off day', meaning: 'A weekend. No check-in needed.' },
+  { label: 'Pending', meaning: 'Waiting for an admin to decide.' },
+  { label: 'Approved', meaning: 'Approved. The days come off your balance.' },
+  { label: 'Rejected', meaning: 'Not approved. The days are not used.' },
+  { label: 'Draft', meaning: 'A role not yet visible outside the company.' },
+  { label: 'Published', meaning: 'Visible on the job board and careers page.' },
+  { label: 'Hired', meaning: 'The candidate accepted the role.' },
 ];
 
-const GLOSSARY: { term: string; meaning: string }[] = [
-  { term: 'Stage', meaning: 'A step a candidate moves through, such as Applied, Screen, Onsite, Offer or Hired.' },
-  { term: 'Scorecard', meaning: 'An interviewer’s rating and notes after an interview. Scores are 1 to 4.' },
-  { term: 'Opportunity', meaning: 'One candidate applying for one role. A person can have several.' },
-  { term: 'Archive', meaning: 'Closing a candidate with a reason (for example “Not a fit”). It can be undone.' },
-  { term: 'AI agent', meaning: 'A checker that reads your real records and reports. It does not change anything or decide anything on its own. Every run is logged.' },
-  { term: 'Approval', meaning: 'A decision an admin must make before something takes effect, such as leave or an offer.' },
-  { term: 'Balance', meaning: 'Days of leave left: the annual allowance minus approved days. Weekends are never counted.' },
-  { term: 'Grace period', meaning: `Minutes after the ${HR_POLICY.workStart} start time before a check-in counts as late (${HR_POLICY.graceMinutes} minutes).` },
+const TERMS: { term: string; meaning: string }[] = [
+  { term: 'Stage', meaning: 'A step in hiring, such as Applied, Screen, Interview, Offer or Hired.' },
+  { term: 'Scorecard', meaning: 'An interviewer’s rating (1 to 4) and notes after an interview.' },
+  { term: 'Candidate account', meaning: 'Your personal login for every company on Orqestra.' },
+  { term: 'Approval', meaning: 'A decision an admin must make before it takes effect, such as leave.' },
+  { term: 'Balance', meaning: 'The days of leave you have left: your allowance minus approved days.' },
+  { term: 'Grace period', meaning: `${HR_POLICY.graceMinutes} minutes after ${HR_POLICY.workStart} before a check-in counts as late.` },
+  { term: 'AI agent', meaning: 'An automatic checker that reads your records and reports. It decides nothing.' },
 ];
 
-function parseHM(value: string): number {
+function parse(value: string): number {
   const [h, m] = value.split(':').map(Number);
   return h * 60 + m;
 }
 
-function minutesToClock(total: number): string {
-  const h = Math.floor(total / 60);
-  const m = total % 60;
-  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+function clock(total: number): string {
+  return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
 }
-
-const STEPS_MANAGER = [
-  { title: 'Open a role', body: 'Go to Postings → New posting. Publish it when it is ready, and it appears on your careers page.' },
-  { title: 'Add candidates', body: 'Go to Pipeline or Contacts → New candidate. Use a candidate’s stage dropdown to move them as they progress.' },
-  { title: 'Schedule and score', body: 'Open a candidate, add an interview, then have each interviewer submit a scorecard.' },
-  { title: 'Approve leave', body: 'Go to Leave. Requests waiting for you are at the top. Approve or reject with an optional note.' },
-  { title: 'Check the agents', body: 'Go to AI agents to see what needs attention. Click Run now to refresh a check.' },
-];
-
-const STEPS_EMPLOYEE = [
-  { title: 'Check in', body: 'Go to Attendance and press Check in when you start. Press Check out when you finish.' },
-  { title: 'Request leave', body: 'Go to Leave, pick the type and dates, add a reason, and send. Weekends are not counted.' },
-  { title: 'See your status', body: 'Your request shows as Pending, Approved or Rejected. Your balance is shown above the form.' },
-  { title: 'Refer someone', body: 'Go to Referrals to suggest a person you know for an open role.' },
-];
 
 export default function HelpPage() {
   return (
-    <div className="min-h-screen bg-canvas text-ink">
-      <header className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5">
+    <div className="min-h-screen bg-white text-black">
+      <header className="mx-auto flex max-w-4xl items-center justify-between px-6 py-6">
         <SourceLockup href="/" />
-        <Link href="/login" className="rounded-full px-4 py-2 text-sm font-medium text-ink-2 hover:text-ink">
+        <Link href="/login" className="rounded-full bg-brand px-4 py-2 text-sm font-medium text-on-brand">
           Sign in
         </Link>
       </header>
 
-      <main className="mx-auto max-w-5xl px-6 pb-24">
-        <section className="pb-10 pt-6">
-          <h1 className="text-3xl font-semibold tracking-[-0.02em]">Help</h1>
-          <p className="mt-2 max-w-2xl text-md text-ink-2">
-            Where to find things in Orqestra, what each menu item is for, and what the words on the
-            screen mean. Start with the steps for your role.
+      <main className="mx-auto max-w-4xl px-6 pb-24">
+        <section className="pb-10 pt-4">
+          <h1 className="text-4xl font-semibold tracking-[-0.02em]">How Orqestra works</h1>
+          <p className="mt-3 max-w-2xl text-lg">
+            Each feature below says what it is for, what to do with it, and who can use it. Pick the
+            part that matches what you need.
           </p>
-          <nav aria-label="On this page" className="mt-6 flex flex-wrap gap-2 text-sm">
-            {[
-              ['#start', 'Getting started'],
-              ['#menu', 'Menu guide'],
-              ['#status', 'What the labels mean'],
-              ['#terms', 'Terms'],
-            ].map(([href, label]) => (
-              <a key={href} href={href} className="rounded-full bg-surface px-3 py-1.5 text-ink-2 hover:text-ink">
-                {label}
+          <nav aria-label="Jump to a section" className="mt-6 flex flex-wrap gap-2 text-base">
+            {SECTIONS.map((s) => (
+              <a key={s.id} href={`#${s.id}`} className="rounded-full border border-line px-4 py-2 hover:bg-muted">
+                {s.title.split(':')[0]}
               </a>
             ))}
+            <a href="#labels" className="rounded-full border border-line px-4 py-2 hover:bg-muted">What the labels mean</a>
+            <a href="#terms" className="rounded-full border border-line px-4 py-2 hover:bg-muted">Words explained</a>
           </nav>
         </section>
 
-        <section id="start" className="scroll-mt-6 pb-14">
-          <h2 className="mb-4 text-xl font-medium">Getting started</h2>
-          <div className="grid gap-4 md:grid-cols-2">
-            <RoleCard
-              title="Manager or recruiter"
-              href="/demo/manager"
-              hrefLabel="Try the manager demo"
-              steps={STEPS_MANAGER}
-              note="Admins can approve leave, run agents, and change settings."
-            />
-            <RoleCard
-              title="Employee"
-              href="/demo/employee"
-              hrefLabel="Try the employee demo"
-              steps={STEPS_EMPLOYEE}
-              note="Employees see their own leave requests, and the team’s check-in list."
-            />
-          </div>
-          <p className="mt-4 text-xs text-ink-2">
-            The demo links sign you into a sample workspace with no account. Each demo sign-in starts
-            with a clean slate.
-          </p>
-        </section>
+        {SECTIONS.map((section) => (
+          <section key={section.id} id={section.id} className="scroll-mt-6 pb-14">
+            <h2 className="text-2xl font-semibold tracking-[-0.01em]">{section.title}</h2>
+            <p className="mb-6 mt-2 text-base">{section.intro}</p>
+            <div className="flex flex-col gap-4">
+              {section.features.map((f) => (
+                <article key={f.name} className="rounded-2xl bg-surface p-6">
+                  <div className="flex items-start gap-4">
+                    <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-muted">
+                      <f.icon size={20} strokeWidth={1.75} />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                        <h3 className="text-xl font-semibold">{f.name}</h3>
+                        <span className="text-sm">Who: {f.who}</span>
+                      </div>
+                      <p className="mt-2 text-base">{f.what}</p>
+                      <h4 className="mt-4 text-sm font-semibold uppercase tracking-wide">How to use it</h4>
+                      <ol className="mt-2 flex list-decimal flex-col gap-1.5 pl-5 text-base">
+                        {f.steps.map((step) => (
+                          <li key={step}>{step}</li>
+                        ))}
+                      </ol>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        ))}
 
-        <section id="menu" className="scroll-mt-6 pb-14">
-          <h2 className="mb-1 text-xl font-medium">Menu guide</h2>
-          <p className="mb-5 text-sm text-ink-2">Each item in the left menu, and what it is for.</p>
-          <div className="flex flex-col gap-8">
-            {NAV.map((group) => (
-              <div key={group.title}>
-                <h3 className="mb-3 text-xs font-medium text-ink-2">{group.title}</h3>
-                <div className={`${surface} divide-y divide-line overflow-hidden`}>
-                  {group.items.map(({ icon: Icon, name, href, what, who }) => (
-                    <Link key={href} href={href} className="flex gap-4 px-5 py-4 transition-colors duration-[120ms] hover:bg-muted/60">
-                      <span className="mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-muted">
-                        <Icon size={16} strokeWidth={1.75} />
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="flex flex-wrap items-center gap-2">
-                          <span className="text-sm font-medium">{name}</span>
-                          {who ? <Badge>{who}</Badge> : null}
-                        </span>
-                        <span className="mt-1 block text-sm text-ink-2">{what}</span>
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section id="status" className="scroll-mt-6 pb-14">
-          <h2 className="mb-1 text-xl font-medium">What the labels mean</h2>
-          <p className="mb-5 text-sm text-ink-2">The coloured dot shows the tone: green is good, amber needs a look, red needs action.</p>
-          <div className={`${surface} divide-y divide-line overflow-hidden`}>
-            {STATUS.map((s) => (
-              <div key={s.label} className="flex flex-col gap-2 px-5 py-3.5 sm:flex-row sm:items-center sm:gap-6">
-                <span className="w-44 shrink-0">
-                  <Badge tone={s.tone}>{s.label}</Badge>
-                </span>
-                <span className="text-sm text-ink-2">{s.meaning}</span>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section id="terms" className="scroll-mt-6 pb-14">
-          <h2 className="mb-4 text-xl font-medium">Terms</h2>
-          <dl className={`${surface} grid gap-px overflow-hidden bg-line sm:grid-cols-2`}>
-            {GLOSSARY.map((g) => (
-              <div key={g.term} className="bg-surface p-5">
-                <dt className="text-sm font-medium">{g.term}</dt>
-                <dd className="mt-1 text-sm text-ink-2">{g.meaning}</dd>
+        <section id="labels" className="scroll-mt-6 pb-14">
+          <h2 className="text-2xl font-semibold tracking-[-0.01em]">What the labels mean</h2>
+          <p className="mb-5 mt-2 text-base">These words appear on badges and status lines across the app.</p>
+          <dl className="grid gap-px overflow-hidden rounded-2xl bg-line sm:grid-cols-2">
+            {STATUSES.map((s) => (
+              <div key={s.label} className="bg-surface p-5">
+                <dt className="text-base font-semibold">{s.label}</dt>
+                <dd className="mt-1 text-base">{s.meaning}</dd>
               </div>
             ))}
           </dl>
         </section>
 
-        <section className="rounded-card bg-surface p-6">
-          <h2 className="text-md font-medium">Something not covered?</h2>
-          <p className="mt-1 text-sm text-ink-2">
-            Ask the person who set up your workspace, or go to <Link href="/settings" className="font-medium text-ink hover:underline">Settings</Link>.
-            Attendance, leave and agent rules are set by your administrator.
+        <section id="terms" className="scroll-mt-6 pb-14">
+          <h2 className="text-2xl font-semibold tracking-[-0.01em]">Words explained</h2>
+          <dl className="mt-5 grid gap-px overflow-hidden rounded-2xl bg-line sm:grid-cols-2">
+            {TERMS.map((t) => (
+              <div key={t.term} className="bg-surface p-5">
+                <dt className="text-base font-semibold">{t.term}</dt>
+                <dd className="mt-1 text-base">{t.meaning}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+
+        <section className="rounded-2xl bg-brand p-8 text-on-brand">
+          <h2 className="text-2xl font-semibold">Still stuck?</h2>
+          <p className="mt-2 text-base text-on-brand">
+            Ask the person who set up your workspace. Leave and attendance rules are set by your admin.
           </p>
-          <p className="mt-3 flex items-center gap-2 text-xs text-ink-2">
-            <CalendarCheck size={14} /> Working hours: {HR_POLICY.workStart} start, {HR_POLICY.graceMinutes}-minute grace, {HR_POLICY.standardHours}-hour day, Friday and Saturday off ({HR_POLICY.timezone}).
-          </p>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <Link href="/jobs" className="rounded-full bg-surface px-5 py-2.5 text-sm font-medium text-black">Find jobs</Link>
+            <Link href="/signup" className="rounded-full bg-surface px-5 py-2.5 text-sm font-medium text-black">Create workspace</Link>
+          </div>
         </section>
       </main>
     </div>
-  );
-}
-
-function RoleCard({
-  title,
-  href,
-  hrefLabel,
-  steps,
-  note,
-}: {
-  title: string;
-  href: string;
-  hrefLabel: string;
-  steps: { title: string; body: string }[];
-  note: string;
-}) {
-  return (
-    <article className={`${surface} flex flex-col gap-4 p-6`}>
-      <div>
-        <h3 className="text-md font-medium">{title}</h3>
-        <p className="mt-1 text-sm text-ink-2">{note}</p>
-      </div>
-      <ol className="flex flex-col gap-3">
-        {steps.map((s, i) => (
-          <li key={s.title} className="flex gap-3">
-            <span className="inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-medium">
-              {i + 1}
-            </span>
-            <span>
-              <span className="block text-sm font-medium">{s.title}</span>
-              <span className="block text-sm text-ink-2">{s.body}</span>
-            </span>
-          </li>
-        ))}
-      </ol>
-      <a href={href} className="mt-auto inline-flex w-fit items-center rounded-full bg-brand px-4 py-2 text-sm font-medium text-on-brand">
-        {hrefLabel}
-      </a>
-    </article>
   );
 }

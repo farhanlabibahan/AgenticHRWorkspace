@@ -29,7 +29,7 @@ export default async function CareersLayout({
   // everything under this layout: the board, each posting and its form.
   const brand = readBrand(org.brand);
   const face = brand.font ? BRAND_FONT_FACES[brand.font] : null;
-  const onDark = !!brand.background && textOn(brand.background) !== '#1d2419';
+  const onDark = !!brand.background && textOn(brand.background) !== '#000000';
 
   return (
     <div

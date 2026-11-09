@@ -85,7 +85,7 @@ export function renderNewsletterText(c: NewsletterContent): string {
 }
 
 export function renderNewsletterHtml(c: NewsletterContent): string {
-  const bg = c.brand.background ?? '#e6e6e6';
+  const bg = c.brand.background ?? '#ffffff';
   const p = palette(bg);
   const accent = c.brand.color ?? p.ink;
   const onAccent = c.brand.color ? textOn(c.brand.color) : p.canvas;
