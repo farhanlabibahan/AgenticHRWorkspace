@@ -18,6 +18,24 @@ export class EmailTakenError extends Error {
   }
 }
 
+/** The one company this deployment serves. Demo and sample orgs don't count. */
+export const SINGLE_COMPANY_MESSAGE =
+  'This Orqestra workspace already has its company. Ask your admin to add you as a team member, or sign in.';
+
+export async function companyExists(): Promise<boolean> {
+  const count = await db.organization.count({
+    where: {
+      NOT: {
+        OR: [
+          { slug: { startsWith: 'demo' } },
+          { slug: { startsWith: 'sample-' } },
+        ],
+      },
+    },
+  });
+  return count > 0;
+}
+
 export function slugify(input: string): string {
   return input
     .toLowerCase()

@@ -13,7 +13,7 @@ import {
   loginErrorPath,
   readPendingGoogle,
 } from '@/server/google-auth';
-import { createWorkspace, EmailTakenError } from '@/server/workspace';
+import { companyExists, createWorkspace, EmailTakenError, SINGLE_COMPANY_MESSAGE } from '@/server/workspace';
 import { SIGNUP_KIND_COOKIE } from '@/lib/signup-kind';
 
 export type AuthFormState = { error?: string } | undefined;
@@ -32,6 +32,8 @@ export async function signup(_prev: AuthFormState, formData: FormData): Promise<
 
   const existing = await db.user.findFirst({ where: { email } });
   if (existing) return { error: 'An account with this email already exists.' };
+
+  if (await companyExists()) return { error: SINGLE_COMPANY_MESSAGE };
 
   const passwordHash = await bcrypt.hash(password, 12);
   try {
@@ -120,6 +122,8 @@ export async function finishGoogleSignup(_prev: AuthFormState, formData: FormDat
   const orgName = String(formData.get('orgName') ?? '').trim();
   const name = String(formData.get('name') ?? '').trim();
   if (!orgName || !name) return { error: 'All fields are required.' };
+
+  if (await companyExists()) return { error: SINGLE_COMPANY_MESSAGE };
 
   try {
     await createWorkspace({
