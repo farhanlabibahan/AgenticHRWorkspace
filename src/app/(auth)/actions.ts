@@ -91,8 +91,9 @@ export async function googleSignIn(formData: FormData): Promise<void> {
 }
 
 /** A new workspace's kind from a sign-up form: AGENCY only when asked for. */
-function signupKind(value: FormDataEntryValue | null): 'COMPANY' | 'AGENCY' {
-  return value === 'agency' ? 'AGENCY' : 'COMPANY';
+function signupKind(_value: FormDataEntryValue | null): 'COMPANY' | 'AGENCY' {
+  // Single-company build: every workspace is a Company, whatever the form says.
+  return 'COMPANY';
 }
 
 /** /login/workspace: sign in to the workspace they picked. */

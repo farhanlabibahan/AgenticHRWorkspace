@@ -55,7 +55,8 @@ async function requireAdmin() {
 
 export async function setOrgKindAction(kind: OrgKind) {
   const ctx = await requireAdmin();
-  if (kind !== 'COMPANY' && kind !== 'AGENCY') return;
+  // Single-company build: the organization is always a Company. Agency mode is off.
+  if (kind !== 'COMPANY') return;
   await setOrgKind(ctx, kind);
   refresh();
 }

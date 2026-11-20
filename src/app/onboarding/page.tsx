@@ -3,7 +3,6 @@ import { SourceLockup } from '@/components/powered-by';
 import { db } from '@/lib/db';
 import { requireSession } from '@/lib/session';
 import { completeOnboardingAction } from '@/app/org-actions';
-import { OrgKindPicker } from '@/components/org-kind-picker';
 import { GroupManager } from '@/components/group-manager';
 import { OnboardingPipeline } from '@/components/onboarding-pipeline';
 import { btnGhost, surface } from '@/components/form-controls';
@@ -57,16 +56,8 @@ export default async function OnboardingPage() {
 
       <div className="mt-8 flex flex-col gap-4">
         <section className={`${surface} p-5`}>
-          <h2 className="mb-1 text-md font-medium">1 · Who are you hiring for?</h2>
-          <p className="mb-4 text-sm text-ink-2">
-            This shapes how postings are organized across the app.
-          </p>
-          <OrgKindPicker current={org.kind} />
-        </section>
-
-        <section className={`${surface} p-5`}>
           <h2 className="mb-1 text-md font-medium">
-            2 · {isAgency ? 'Client companies' : 'Departments'}
+            1 · {isAgency ? 'Client companies' : 'Departments'}
           </h2>
           <p className="mb-4 text-sm text-ink-2">
             {isAgency
