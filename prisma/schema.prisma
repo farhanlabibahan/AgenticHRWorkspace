@@ -102,6 +102,18 @@ model Organization {
   leaveTypes       LeaveType[]
   leaveRequests    LeaveRequest[]
   agentRuns        AgentRun[]
+  docsSite         DocsSite?
+}
+
+model DocsSite {
+  orgId      String       @id
+  org        Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  enabled    Boolean      @default(false)
+  startsAt   DateTime?
+  endsAt     DateTime?
+  content    Json
+  team       Json
+  updatedAt  DateTime     @updatedAt
 }
 
 // Grouping for companies hiring across teams (Engineering, Design…)
