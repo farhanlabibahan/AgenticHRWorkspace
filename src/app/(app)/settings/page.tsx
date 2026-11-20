@@ -181,11 +181,6 @@ export default async function SettingsPage({
                 /careers/{org?.slug}
               </a>
             </p>
-            {isAdmin(ctx) && (
-              <p className="mt-2 text-sm text-ink-2">Public documentation:{' '}
-                <Link href="/settings/docs" className="font-medium text-ink underline underline-offset-2">Manage /docs publishing</Link>
-              </p>
-            )}
           </Row>
           <Row>
             <p className="mb-3 text-sm text-ink-2">

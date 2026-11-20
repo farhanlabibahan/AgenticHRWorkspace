@@ -2,8 +2,8 @@
 
 import { revalidatePath } from 'next/cache';
 import { db } from '@/lib/db';
-import { isAdmin, requireSession } from '@/lib/session';
-import { DOC_KEYS, defaultContent, readContent, readTeam, type DocsContent } from '@/lib/docs-site';
+import { hasDocsAdminAccess } from '@/lib/docs-admin';
+import { DOC_KEYS, getCentralDocsOrg, readContent, readTeam, type DocsContent } from '@/lib/docs-site';
 
 function parseDate(value: unknown): Date | null {
   if (value === '' || value == null) return null;
@@ -17,8 +17,9 @@ export async function saveDocsAction(input: {
   enabled: boolean; startsAt: string; endsAt: string; content: DocsContent;
   team: { id: string; name: string; role: string; email: string; image: string }[];
 }) {
-  const ctx = await requireSession();
-  if (!isAdmin(ctx)) throw new Error('Only admins can edit documentation');
+  if (!(await hasDocsAdminAccess())) throw new Error('Documentation password required');
+  const org = await getCentralDocsOrg();
+  if (!org) throw new Error('Central documentation workspace is not configured');
   const startsAt = parseDate(input.startsAt);
   const endsAt = parseDate(input.endsAt);
   if (startsAt && endsAt && endsAt <= startsAt) throw new Error('End time must follow start time');
@@ -30,21 +31,11 @@ export async function saveDocsAction(input: {
     image: member.image.startsWith('data:image/jpeg;base64,') && member.image.length < 300000 ? member.image : '',
   }));
   await db.docsSite.upsert({
-    where: { orgId: ctx.orgId },
-    create: { orgId: ctx.orgId, enabled: input.enabled, startsAt, endsAt, content, team },
+    where: { orgId: org.id },
+    create: { orgId: org.id, enabled: input.enabled, startsAt, endsAt, content, team },
     update: { enabled: input.enabled, startsAt, endsAt, content, team },
   });
   revalidatePath('/docs');
   revalidatePath('/settings/docs');
   return { ok: true };
-}
-
-export async function createDocsDraftAction() {
-  const ctx = await requireSession();
-  if (!isAdmin(ctx)) throw new Error('Only admins can edit documentation');
-  return db.docsSite.upsert({
-    where: { orgId: ctx.orgId },
-    create: { orgId: ctx.orgId, enabled: false, content: defaultContent, team: [] },
-    update: {},
-  });
 }
