@@ -38,37 +38,44 @@ export function isPublished(site: { enabled: boolean; startsAt: Date | null; end
   return site.enabled && (!site.startsAt || site.startsAt <= now) && (!site.endsAt || site.endsAt > now);
 }
 
-/** The one company this deployment documents. Demo and sample tenants are excluded. */
+/** Storage owner for the central document. Demo and sample tenants never own it. */
 export async function getCentralDocsOrg() {
   const slug = process.env.DOCS_ORG_SLUG;
   if (slug) return db.organization.findUnique({ where: { slug }, select: { id: true, name: true } });
-  const organizations = await db.organization.findMany({
-    where: { NOT: { OR: [{ slug: { startsWith: 'demo' } }, { slug: { startsWith: 'sample-' } }] } },
-    take: 2,
+  const realOrg = { NOT: { OR: [{ slug: { startsWith: 'demo' } }, { slug: { startsWith: 'sample-' } }] } };
+  const existing = await db.organization.findFirst({
+    where: { ...realOrg, docsSite: { isNot: null } },
+    orderBy: { createdAt: 'asc' },
     select: { id: true, name: true },
   });
-  return organizations.length === 1 ? organizations[0] : null;
+  return existing ?? db.organization.findFirst({ where: realOrg, orderBy: { createdAt: 'asc' }, select: { id: true, name: true } });
 }
 
-export async function getLiveDocsData(orgId: string) {
-  const [users, postings, opportunities, interviews, events, attendance, leaveRequests, agentRuns, apiKeys, webhooks, latestEvent, org] = await Promise.all([
-    db.user.count({ where: { orgId, deactivatedAt: null } }),
-    db.posting.count({ where: { orgId } }),
-    db.opportunity.count({ where: { orgId } }),
-    db.interview.count({ where: { orgId } }),
-    db.event.count({ where: { orgId } }),
-    db.attendance.count({ where: { orgId } }),
-    db.leaveRequest.count({ where: { orgId } }),
-    db.agentRun.count({ where: { orgId } }),
-    db.apiKey.count({ where: { orgId } }),
-    db.webhookEndpoint.count({ where: { orgId } }),
-    db.event.findFirst({ where: { orgId }, orderBy: { occurredAt: 'desc' }, select: { occurredAt: true } }),
-    db.organization.findUniqueOrThrow({ where: { id: orgId }, select: { talentNetworkEnabled: true, requirePostingApproval: true, autoScheduleOnInterviewStages: true } }),
+export async function getLiveDocsData() {
+  const organizations = await db.organization.findMany({
+    where: { NOT: { OR: [{ slug: { startsWith: 'demo' } }, { slug: { startsWith: 'sample-' } }] } },
+    select: { id: true, talentNetworkEnabled: true, requirePostingApproval: true, autoScheduleOnInterviewStages: true },
+  });
+  const scope = { orgId: { in: organizations.map((org) => org.id) } };
+  const [users, postings, opportunities, interviews, events, attendance, leaveRequests, agentRuns, apiKeys, webhooks, latestEvent] = await Promise.all([
+    db.user.count({ where: { ...scope, deactivatedAt: null } }),
+    db.posting.count({ where: scope }),
+    db.opportunity.count({ where: scope }),
+    db.interview.count({ where: scope }),
+    db.event.count({ where: scope }),
+    db.attendance.count({ where: scope }),
+    db.leaveRequest.count({ where: scope }),
+    db.agentRun.count({ where: scope }),
+    db.apiKey.count({ where: scope }),
+    db.webhookEndpoint.count({ where: scope }),
+    db.event.findFirst({ where: scope, orderBy: { occurredAt: 'desc' }, select: { occurredAt: true } }),
   ]);
   return { users, postings, opportunities, interviews, events, attendance, leaveRequests, agentRuns,
     apiKeys, webhooks, latestEventAt: latestEvent?.occurredAt.toISOString() ?? null,
-    features: { ai: aiConfigured(), talentNetwork: org.talentNetworkEnabled, postingApproval: org.requirePostingApproval,
-      autoScheduling: org.autoScheduleOnInterviewStages }, asOf: new Date().toISOString() };
+    features: { ai: aiConfigured(), talentNetwork: organizations.some((org) => org.talentNetworkEnabled),
+      postingApproval: organizations.some((org) => org.requirePostingApproval),
+      autoScheduling: organizations.some((org) => org.autoScheduleOnInterviewStages) },
+    asOf: new Date().toISOString() };
 }
 
 export const publicApi = [

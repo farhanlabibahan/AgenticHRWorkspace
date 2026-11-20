@@ -104,7 +104,7 @@ export default async function DocsPage() {
   const site = await db.docsSite.findUnique({ where: { orgId: org.id } });
   if (!site || !isPublished(site)) return <Unavailable />;
   const [live, content, team] = await Promise.all([
-    getLiveDocsData(org.id),
+    getLiveDocsData(),
     Promise.resolve(readContent(site.content)),
     Promise.resolve(readTeam(site.team)),
   ]);
@@ -146,7 +146,7 @@ export default async function DocsPage() {
             <div>
               <span className="dx-in inline-flex items-center gap-2 rounded-full bg-canvas/80 px-2.5 py-1 text-2xs font-medium shadow-[0_0_0_1px_var(--color-line)] backdrop-blur" style={{ '--i': 0 } as React.CSSProperties}>
                 <Sparkles size={13} className="text-brand" />
-                {org.name} · product documentation
+                Orqestra · product documentation
               </span>
               <h1 className="dx-in mt-5 text-3xl font-semibold leading-[1.08] md:text-4xl" style={{ '--i': 1 } as React.CSSProperties}>
                 {content.headline}
@@ -173,7 +173,7 @@ export default async function DocsPage() {
               <div className="flex items-center justify-between text-sm">
                 <span className="flex items-center gap-2 font-medium">
                   <span className="dx-pulse size-2 rounded-full bg-positive text-positive" />
-                  Live workspace
+                  Live platform
                 </span>
                 <span className="text-xs text-ink/60">{utc(live.asOf)}</span>
               </div>
@@ -241,10 +241,10 @@ export default async function DocsPage() {
         <section id="live" className="bg-surface">
           <div className="dx-reveal mx-auto max-w-6xl px-6 py-16">
             <Heading
-              title="Current workspace activity"
+              title="Current platform activity"
               aside={
                 <>
-                  <p>Counted from application records, {utc(live.asOf)}.</p>
+                  <p>Aggregated across company workspaces, excluding demos and samples. Updated {utc(live.asOf)}.</p>
                   <p className="text-ink/60">Operational activity, not customer or revenue claims.</p>
                 </>
               }
