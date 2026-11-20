@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { db } from '@/lib/db';
-import { getLiveDocsData, isPublished, publicApi, readContent, readTeam } from '@/lib/docs-site';
-import { getSessionContext } from '@/lib/session';
+import { getCentralDocsOrg, getLiveDocsData, isPublished, publicApi, readContent, readTeam } from '@/lib/docs-site';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Documentation — Orqestra', description: 'Product overview and technical documentation' };
@@ -27,16 +26,8 @@ function Unavailable() {
   return <main className="grid min-h-screen place-items-center bg-[#f7faf8] px-5"><div className="max-w-md rounded-2xl border border-emerald-100 bg-white p-10 text-center shadow-sm"><p className="text-sm font-semibold uppercase tracking-[.2em] text-emerald-700">Orqestra Docs</p><h1 className="mt-4 text-3xl font-semibold text-emerald-950">Not Available</h1><p className="mt-3 text-gray-600">This documentation is not currently published.</p></div></main>;
 }
 
-export default async function DocsPage({ searchParams }: { searchParams: Promise<{ org?: string }> }) {
-  const { org: slug } = await searchParams;
-  const org = slug
-    ? await db.organization.findUnique({ where: { slug }, select: { id: true, name: true, slug: true } })
-    : await (async () => {
-        const ctx = await getSessionContext();
-        if (ctx) return db.organization.findUnique({ where: { id: ctx.orgId }, select: { id: true, name: true, slug: true } });
-        const organizations = await db.organization.findMany({ take: 2, select: { id: true, name: true, slug: true } });
-        return organizations.length === 1 ? organizations[0] : null;
-      })();
+export default async function DocsPage() {
+  const org = await getCentralDocsOrg();
   if (!org) return <Unavailable />;
   const site = await db.docsSite.findUnique({ where: { orgId: org.id } });
   if (!site || !isPublished(site)) return <Unavailable />;

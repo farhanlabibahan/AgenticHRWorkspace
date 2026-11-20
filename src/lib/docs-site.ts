@@ -38,6 +38,18 @@ export function isPublished(site: { enabled: boolean; startsAt: Date | null; end
   return site.enabled && (!site.startsAt || site.startsAt <= now) && (!site.endsAt || site.endsAt > now);
 }
 
+/** The one company this deployment documents. Demo and sample tenants are excluded. */
+export async function getCentralDocsOrg() {
+  const slug = process.env.DOCS_ORG_SLUG;
+  if (slug) return db.organization.findUnique({ where: { slug }, select: { id: true, name: true } });
+  const organizations = await db.organization.findMany({
+    where: { NOT: { OR: [{ slug: { startsWith: 'demo' } }, { slug: { startsWith: 'sample-' } }] } },
+    take: 2,
+    select: { id: true, name: true },
+  });
+  return organizations.length === 1 ? organizations[0] : null;
+}
+
 export async function getLiveDocsData(orgId: string) {
   const [users, postings, opportunities, interviews, events, attendance, leaveRequests, agentRuns, apiKeys, webhooks, latestEvent, org] = await Promise.all([
     db.user.count({ where: { orgId, deactivatedAt: null } }),

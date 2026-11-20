@@ -29,9 +29,8 @@ async function resizeImage(file: File): Promise<string> {
   return canvas.toDataURL('image/jpeg', 0.78);
 }
 
-export function DocsEditor({ initial, orgSlug }: {
+export function DocsEditor({ initial }: {
   initial: { enabled: boolean; startsAt: string | null; endsAt: string | null; content: DocsContent; team: DocsMember[] };
-  orgSlug: string;
 }) {
   const [enabled, setEnabled] = useState(initial.enabled);
   const [startsAt, setStartsAt] = useState(toLocal(initial.startsAt));
@@ -40,7 +39,7 @@ export function DocsEditor({ initial, orgSlug }: {
   const [team, setTeam] = useState(initial.team);
   const [message, setMessage] = useState('');
   const [pending, startTransition] = useTransition();
-  const publicUrl = `/docs?org=${encodeURIComponent(orgSlug)}`;
+  const publicUrl = '/docs';
 
   function save() {
     setMessage('');

@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { db } from '@/lib/db';
-import { defaultContent, readContent, readTeam } from '@/lib/docs-site';
+import { defaultContent, getCentralDocsOrg, readContent, readTeam } from '@/lib/docs-site';
 import { isAdmin, requireSession } from '@/lib/session';
 import { DocsEditor } from './editor';
 
@@ -10,10 +10,11 @@ export default async function DocsSettingsPage() {
   const ctx = await requireSession();
   if (!isAdmin(ctx)) redirect('/settings');
   const [org, site] = await Promise.all([
-    db.organization.findUniqueOrThrow({ where: { id: ctx.orgId }, select: { slug: true } }),
+    getCentralDocsOrg(),
     db.docsSite.findUnique({ where: { orgId: ctx.orgId } }),
   ]);
-  return <DocsEditor orgSlug={org.slug} initial={{
+  if (!org || org.id !== ctx.orgId) redirect('/settings');
+  return <DocsEditor initial={{
     enabled: site?.enabled ?? false,
     startsAt: site?.startsAt?.toISOString() ?? null,
     endsAt: site?.endsAt?.toISOString() ?? null,
