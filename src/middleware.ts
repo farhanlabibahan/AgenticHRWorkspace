@@ -6,7 +6,7 @@ export default NextAuth(authConfig).auth;
 
 export const config = {
   // Everything requires auth except NextAuth routes, static assets,
-  // and public surfaces (careers pages + public API, which ship later).
+  // and public surfaces (careers pages, published docs, and public API).
   // The icons, the manifest and the brand kit (public/brand) are public too:
   // a browser asks for them on the sign-in and careers pages, logged out.
   // oauth/ is Orqestra's OAuth client metadata, which authorization servers
@@ -16,6 +16,6 @@ export const config = {
   // unsubscribe is a newsletter reader's own page; api/email/ takes the
   // email provider's bounce notifications (checked by signature).
   matcher: [
-    '/((?!api/auth|api/cron|api/v1|api/careers|api/logo|careers|portal|share|schedule|offer|unsubscribe|api/unsubscribe|api/email/|agencies|talent-network|extension|site-assets|oauth/|_next/static|_next/image|fonts|brand/|favicon.ico|apple-icon.png|manifest.webmanifest|help|jobs|candidate).*)',
+    '/((?!api/auth|api/cron|api/v1|api/careers|api/logo|careers|docs(?:/|$)|portal|share|schedule|offer|unsubscribe|api/unsubscribe|api/email/|agencies|talent-network|extension|site-assets|oauth/|_next/static|_next/image|fonts|brand/|favicon.ico|apple-icon.png|manifest.webmanifest|help|jobs|candidate).*)',
   ],
 };
