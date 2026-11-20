@@ -2,7 +2,63 @@
 
 html:has(.dx-page) {
   scroll-behavior: smooth;
-  scroll-padding-top: 88px;
+  scroll-padding-top: 24px;
+}
+
+/* Sidebar: 240px open (as in the app), a 64px icon rail when collapsed (html[data-dx-collapsed]). */
+.dx-side {
+  width: 240px;
+  transition: width 250ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@media (min-width: 1024px) {
+  .dx-main {
+    padding-left: 240px;
+    transition: padding-left 250ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  html[data-dx-collapsed] .dx-main {
+    padding-left: 64px;
+  }
+}
+html[data-dx-collapsed] .dx-side {
+  width: 64px;
+}
+html[data-dx-collapsed] .dx-side .dx-label {
+  display: none;
+}
+html[data-dx-collapsed] .dx-side .dx-item {
+  padding-left: 10px;
+}
+.dx-when-closed,
+html[data-dx-collapsed] .dx-when-open {
+  display: none;
+}
+html[data-dx-collapsed] .dx-when-closed {
+  display: block;
+}
+
+/* The active fill glides between rows. */
+.dx-indicator {
+  transition: transform 450ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Idle rows: a mint fill sweeps in from the left on hover. */
+.dx-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--color-recessed);
+  border-radius: 9999px;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 140ms ease-out;
+}
+.dx-item:not([aria-current]):hover::before {
+  transform: scaleX(1);
+}
+.dx-item:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: -2px;
 }
 
 /* Hero wash: two soft mint/emerald fields drifting slowly behind the headline. */
@@ -33,11 +89,6 @@ html:has(.dx-page) {
   mask-image: linear-gradient(to bottom, black, transparent 85%);
 }
 
-/* Sliding nav underline. */
-.dx-underline {
-  left: 0;
-  transition: transform 450ms cubic-bezier(0.22, 1, 0.36, 1), width 450ms cubic-bezier(0.22, 1, 0.36, 1);
-}
 
 /* Live dot. */
 .dx-pulse {

@@ -23,7 +23,7 @@ import {
 import { db } from '@/lib/db';
 import { SourceLockup } from '@/components/powered-by';
 import { getCentralDocsOrg, getLiveDocsData, isPublished, publicApi, readContent, readTeam, type DocsContent } from '@/lib/docs-site';
-import { DocsNav } from './docs-nav';
+import { DocsNav, SIDEBAR_BOOT } from './docs-nav';
 import { CopyRoute, CountUp } from './docs-client';
 import './docs.css';
 
@@ -36,17 +36,17 @@ const utc = (iso: string) =>
 /** Section heading: one real heading, an optional one-line aside on the right. */
 function Heading({ title, aside }: { title: string; aside?: React.ReactNode }) {
   return (
-    <div className="mb-10 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-      <h2 className="max-w-2xl text-4xl font-semibold tracking-[-0.03em] md:text-5xl">{title}</h2>
-      {aside ? <div className="text-sm md:text-right">{aside}</div> : null}
+    <div className="mb-6 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+      <h2 className="max-w-2xl text-2xl font-semibold">{title}</h2>
+      {aside ? <div className="text-xs md:text-right">{aside}</div> : null}
     </div>
   );
 }
 
 function IconDot({ icon: Icon, inverted }: { icon: LucideIcon; inverted?: boolean }) {
   return (
-    <span className={inverted ? 'grid size-11 place-items-center rounded-full bg-on-brand/15 text-on-brand' : 'grid size-11 place-items-center rounded-full bg-recessed text-brand'}>
-      <Icon size={20} strokeWidth={1.9} />
+    <span className={inverted ? 'grid size-9 place-items-center rounded-full bg-on-brand/15 text-on-brand' : 'grid size-9 place-items-center rounded-full bg-recessed text-brand'}>
+      <Icon size={16} strokeWidth={1.75} />
     </span>
   );
 }
@@ -57,9 +57,9 @@ function FlowDiagram({ label, nodes }: { label: string; nodes: { icon: LucideIco
     <div role="img" aria-label={`${label}: ${nodes.map((n) => n.text).join(' to ')}`} className="flex flex-col items-stretch md:flex-row md:items-center">
       {nodes.map((n, i) => (
         <div key={n.text} className="flex flex-col items-center md:flex-1 md:flex-row">
-          <div className="dx-card flex w-full flex-col items-center gap-3 rounded-2xl bg-canvas px-4 py-5 text-center shadow-[0_0_0_1px_var(--color-line)]">
+          <div className="dx-card flex w-full flex-col items-center gap-3 rounded-2xl bg-canvas px-3 py-4 text-center shadow-[0_0_0_1px_var(--color-line)]">
             <IconDot icon={n.icon} />
-            <span className="text-sm font-medium leading-snug">{n.text}</span>
+            <span className="text-xs font-medium leading-snug">{n.text}</span>
           </div>
           {i < nodes.length - 1 ? (
             <>
@@ -132,42 +132,50 @@ export default async function DocsPage() {
   const chips = stackChips(content.stack);
 
   return (
-    <div className="dx-page min-h-screen bg-canvas pb-24 text-ink lg:pb-0">
+    <div className="dx-page dx-main min-h-screen bg-canvas pb-24 text-sm text-ink lg:pb-0">
+      <script dangerouslySetInnerHTML={{ __html: SIDEBAR_BOOT }} />
       <DocsNav />
+      {/* Phones: the logo above the hero (the sidebar is desktop only). */}
+      <div className="flex items-center justify-between px-6 pt-5 lg:hidden">
+        <SourceLockup href="/" />
+        <Link href="/login" className="rounded-full bg-brand px-4 py-2 text-sm font-medium text-on-brand">
+          Open Orqestra
+        </Link>
+      </div>
 
       <main>
         {/* Overview */}
         <section id="overview" className="relative overflow-hidden">
           <div aria-hidden className="dx-wash" />
           <div aria-hidden className="dx-grid" />
-          <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-6 pb-24 pt-16 lg:grid-cols-[1.15fr_0.85fr] lg:pb-32 lg:pt-24">
+          <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-6 pb-16 pt-10 lg:grid-cols-[1.15fr_0.85fr] lg:pb-20 lg:pt-14">
             <div>
-              <span className="dx-in inline-flex items-center gap-2 rounded-full bg-canvas/80 px-3 py-1.5 text-xs font-medium shadow-[0_0_0_1px_var(--color-line)] backdrop-blur" style={{ '--i': 0 } as React.CSSProperties}>
+              <span className="dx-in inline-flex items-center gap-2 rounded-full bg-canvas/80 px-2.5 py-1 text-2xs font-medium shadow-[0_0_0_1px_var(--color-line)] backdrop-blur" style={{ '--i': 0 } as React.CSSProperties}>
                 <Sparkles size={13} className="text-brand" />
                 {org.name} · product documentation
               </span>
-              <h1 className="dx-in mt-6 text-5xl font-semibold leading-[1.02] tracking-[-0.04em] md:text-6xl lg:text-[76px]" style={{ '--i': 1 } as React.CSSProperties}>
+              <h1 className="dx-in mt-5 text-3xl font-semibold leading-[1.08] md:text-4xl" style={{ '--i': 1 } as React.CSSProperties}>
                 {content.headline}
               </h1>
-              <p className="dx-in mt-7 max-w-xl text-xl leading-relaxed" style={{ '--i': 2 } as React.CSSProperties}>
+              <p className="dx-in mt-4 max-w-xl text-md leading-relaxed" style={{ '--i': 2 } as React.CSSProperties}>
                 {content.elevatorPitch}
               </p>
-              <p className="dx-in mt-3 max-w-xl leading-relaxed text-ink/70" style={{ '--i': 3 } as React.CSSProperties}>
+              <p className="dx-in mt-2 max-w-xl text-sm leading-relaxed text-ink/70" style={{ '--i': 3 } as React.CSSProperties}>
                 {content.summary}
               </p>
-              <div className="dx-in mt-10 flex flex-wrap gap-3" style={{ '--i': 4 } as React.CSSProperties}>
-                <a href="#pitch" className="group inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-medium text-on-brand transition-transform active:scale-[0.97]">
+              <div className="dx-in mt-7 flex flex-wrap gap-2" style={{ '--i': 4 } as React.CSSProperties}>
+                <a href="#pitch" className="group inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-medium text-on-brand transition-transform active:scale-[0.97]">
                   Explore the product
                   <ArrowRight size={16} className="transition-transform duration-200 group-hover:translate-x-0.5" />
                 </a>
-                <a href="#technical" className="rounded-full bg-surface px-6 py-3 text-sm font-medium shadow-[0_0_0_1px_var(--color-line)] transition-transform active:scale-[0.97]">
+                <a href="#technical" className="rounded-full bg-surface px-5 py-2.5 text-sm font-medium shadow-[0_0_0_1px_var(--color-line)] transition-transform active:scale-[0.97]">
                   Technical docs
                 </a>
               </div>
             </div>
 
             {/* The one hero metric: live, straight from the database. */}
-            <aside className="dx-in rounded-[24px] bg-canvas/90 p-7 shadow-[0_0_0_1px_var(--color-line),0_30px_70px_-40px_rgb(15_61_52/0.55)] backdrop-blur" style={{ '--i': 3 } as React.CSSProperties}>
+            <aside className="dx-in rounded-[20px] bg-canvas/90 p-6 shadow-[0_0_0_1px_var(--color-line),0_30px_70px_-40px_rgb(15_61_52/0.55)] backdrop-blur" style={{ '--i': 3 } as React.CSSProperties}>
               <div className="flex items-center justify-between text-sm">
                 <span className="flex items-center gap-2 font-medium">
                   <span className="dx-pulse size-2 rounded-full bg-positive text-positive" />
@@ -175,11 +183,11 @@ export default async function DocsPage() {
                 </span>
                 <span className="text-xs text-ink/60">{utc(live.asOf)}</span>
               </div>
-              <div className="mt-8">
-                <CountUp value={live.opportunities} className="block text-7xl font-semibold tracking-[-0.04em]" />
+              <div className="mt-6">
+                <CountUp value={live.opportunities} className="block text-5xl font-semibold" />
                 <p className="mt-1 text-sm">applications in the pipeline</p>
               </div>
-              <dl className="mt-8 divide-y divide-line border-t border-line text-sm">
+              <dl className="mt-6 divide-y divide-line border-t border-line text-sm">
                 {(
                   [
                     ['Job postings', live.postings],
@@ -200,26 +208,26 @@ export default async function DocsPage() {
         </section>
 
         {/* Pitch */}
-        <section id="pitch" className="dx-reveal mx-auto max-w-6xl px-6 py-24">
+        <section id="pitch" className="dx-reveal mx-auto max-w-6xl px-6 py-16">
           <Heading title="The case for Orqestra" />
           <div className="grid gap-4 md:grid-cols-2">
-            <article className="dx-card rounded-[24px] bg-surface p-8 md:p-10">
+            <article className="dx-card rounded-[20px] bg-surface p-6">
               <IconDot icon={CircleAlert} />
-              <h3 className="mt-6 text-2xl font-semibold">The problem</h3>
-              <p className="mt-3 whitespace-pre-wrap text-lg leading-relaxed">{content.problem}</p>
+              <h3 className="mt-4 text-lg font-semibold">The problem</h3>
+              <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed">{content.problem}</p>
             </article>
-            <article className="dx-card rounded-[24px] bg-brand p-8 text-on-brand md:p-10">
+            <article className="dx-card rounded-[20px] bg-brand p-8 text-on-brand md:p-10">
               <IconDot icon={Sparkles} inverted />
-              <h3 className="mt-6 text-2xl font-semibold">The solution</h3>
-              <p className="mt-3 whitespace-pre-wrap text-lg leading-relaxed text-on-brand/90">{content.solution}</p>
+              <h3 className="mt-4 text-lg font-semibold">The solution</h3>
+              <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-on-brand/90">{content.solution}</p>
             </article>
           </div>
           <div className="mt-4 grid gap-4 md:grid-cols-6">
             {PITCH_GRID.map(({ key, title, icon, span }) => (
-              <article key={key} className={`dx-card rounded-[24px] bg-surface p-7 ${span}`}>
+              <article key={key} className={`dx-card rounded-[20px] bg-surface p-5 ${span}`}>
                 <IconDot icon={icon} />
-                <h3 className="mt-5 text-xl font-semibold">{title}</h3>
-                <p className="mt-2 whitespace-pre-wrap leading-relaxed">{content[key]}</p>
+                <h3 className="mt-4 text-md font-semibold">{title}</h3>
+                <p className="mt-1.5 whitespace-pre-wrap text-sm leading-relaxed">{content[key]}</p>
               </article>
             ))}
           </div>
@@ -227,7 +235,7 @@ export default async function DocsPage() {
 
         {/* Live view */}
         <section id="live" className="bg-surface">
-          <div className="dx-reveal mx-auto max-w-6xl px-6 py-24">
+          <div className="dx-reveal mx-auto max-w-6xl px-6 py-16">
             <Heading
               title="Current workspace activity"
               aside={
@@ -238,21 +246,21 @@ export default async function DocsPage() {
               }
             />
             <div className="grid gap-4 lg:grid-cols-[1.5fr_1fr]">
-              <div className="rounded-[24px] bg-canvas p-2 shadow-[0_0_0_1px_var(--color-line)]">
+              <div className="rounded-[20px] bg-canvas p-2 shadow-[0_0_0_1px_var(--color-line)]">
                 <dl className="grid sm:grid-cols-2">
                   {metrics.map(([label, value]) => (
-                    <div key={label} className="flex items-baseline justify-between gap-4 rounded-2xl px-5 py-5 transition-colors duration-150 hover:bg-muted">
+                    <div key={label} className="flex items-baseline justify-between gap-4 rounded-2xl px-4 py-3.5 transition-colors duration-150 hover:bg-muted">
                       <dt className="text-sm">{label}</dt>
-                      <dd className="text-3xl font-semibold tracking-[-0.03em]">
+                      <dd className="text-xl font-semibold">
                         <CountUp value={value} />
                       </dd>
                     </div>
                   ))}
                 </dl>
               </div>
-              <div className="rounded-[24px] bg-canvas p-7 shadow-[0_0_0_1px_var(--color-line)]">
-                <h3 className="text-xl font-semibold">Configuration</h3>
-                <ul className="mt-5 space-y-2">
+              <div className="rounded-[20px] bg-canvas p-5 shadow-[0_0_0_1px_var(--color-line)]">
+                <h3 className="text-md font-semibold">Configuration</h3>
+                <ul className="mt-4 space-y-2">
                   {features.map((f) => (
                     <li key={f.label} className="flex items-center justify-between text-sm">
                       <span>{f.label}</span>
@@ -282,13 +290,13 @@ export default async function DocsPage() {
         </section>
 
         {/* Team */}
-        <section id="team" className="dx-reveal mx-auto max-w-6xl px-6 py-24">
+        <section id="team" className="dx-reveal mx-auto max-w-6xl px-6 py-16">
           <Heading title="People behind the product" />
           {team.length ? (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {team.map((member) => (
-                <article key={member.id} className="dx-card flex items-center gap-5 rounded-[24px] bg-surface p-6">
-                  <div className="grid size-16 shrink-0 place-items-center overflow-hidden rounded-full bg-brand text-2xl font-semibold text-on-brand">
+                <article key={member.id} className="dx-card flex items-center gap-4 rounded-[20px] bg-surface p-5">
+                  <div className="grid size-12 shrink-0 place-items-center overflow-hidden rounded-full bg-brand text-lg font-semibold text-on-brand">
                     {member.image ? (
                       // eslint-disable-next-line @next/next/no-img-element -- admin-supplied URL of any host
                       <img src={member.image} alt="" className="size-full object-cover" />
@@ -297,17 +305,19 @@ export default async function DocsPage() {
                     )}
                   </div>
                   <div className="min-w-0">
-                    <h3 className="text-lg font-semibold">{member.name}</h3>
-                    <p className="text-sm">{member.role}</p>
-                    <a className="mt-1 block truncate text-sm text-brand underline-offset-4 hover:underline" href={`mailto:${member.email}`}>
-                      {member.email}
-                    </a>
+                    <h3 className="text-md font-semibold">{member.name}</h3>
+                    <p className="text-xs">{member.role}</p>
+                    {member.email ? (
+                      <a className="mt-0.5 block truncate text-xs text-brand underline-offset-4 hover:underline" href={`mailto:${member.email}`}>
+                        {member.email}
+                      </a>
+                    ) : null}
                   </div>
                 </article>
               ))}
             </div>
           ) : (
-            <div className="flex items-center gap-5 rounded-[24px] bg-surface p-8">
+            <div className="flex items-center gap-4 rounded-[20px] bg-surface p-6">
               <IconDot icon={Users} />
               <p>Team profiles will appear here when they are published.</p>
             </div>
@@ -316,11 +326,11 @@ export default async function DocsPage() {
 
         {/* Technical */}
         <section id="technical" className="bg-surface">
-          <div className="dx-reveal mx-auto max-w-6xl px-6 py-24">
+          <div className="dx-reveal mx-auto max-w-6xl px-6 py-16">
             <Heading title="How the system works" />
             <div className="space-y-4">
-              <article className="rounded-[24px] bg-muted p-6 md:p-8">
-                <h3 className="mb-6 text-2xl font-semibold">Architecture</h3>
+              <article className="rounded-[20px] bg-muted p-5 md:p-6">
+                <h3 className="mb-4 text-md font-semibold">Architecture</h3>
                 <FlowDiagram
                   label="Architecture"
                   nodes={[
@@ -330,10 +340,10 @@ export default async function DocsPage() {
                     { icon: Database, text: 'PostgreSQL and integrations' },
                   ]}
                 />
-                <p className="mt-6 max-w-3xl whitespace-pre-wrap leading-relaxed">{content.architecture}</p>
+                <p className="mt-4 max-w-3xl whitespace-pre-wrap text-sm leading-relaxed">{content.architecture}</p>
               </article>
-              <article className="rounded-[24px] bg-muted p-6 md:p-8">
-                <h3 className="mb-6 text-2xl font-semibold">Data flow</h3>
+              <article className="rounded-[20px] bg-muted p-5 md:p-6">
+                <h3 className="mb-4 text-md font-semibold">Data flow</h3>
                 <FlowDiagram
                   label="Data flow"
                   nodes={[
@@ -344,25 +354,25 @@ export default async function DocsPage() {
                     { icon: Users, text: 'Employee operations' },
                   ]}
                 />
-                <p className="mt-6 max-w-3xl whitespace-pre-wrap leading-relaxed">{content.dataFlow}</p>
+                <p className="mt-4 max-w-3xl whitespace-pre-wrap text-sm leading-relaxed">{content.dataFlow}</p>
               </article>
-              <article className="rounded-[24px] bg-muted p-6 md:p-8">
-                <h3 className="text-2xl font-semibold">Technology stack</h3>
+              <article className="rounded-[20px] bg-muted p-5 md:p-6">
+                <h3 className="text-md font-semibold">Technology stack</h3>
                 {chips ? (
                   <>
-                    <ul className="mt-5 flex flex-wrap gap-2">
+                    <ul className="mt-3 flex flex-wrap gap-1.5">
                       {chips.map((c) => (
-                        <li key={c} className="rounded-full bg-canvas px-4 py-2 text-sm font-medium shadow-[0_0_0_1px_var(--color-line)]">
+                        <li key={c} className="rounded-full bg-canvas px-3 py-1.5 text-xs font-medium shadow-[0_0_0_1px_var(--color-line)]">
                           {c}
                         </li>
                       ))}
                     </ul>
                     {content.stack.split(/\.\s+/).slice(1).join('. ').trim() ? (
-                      <p className="mt-4 max-w-3xl leading-relaxed">{content.stack.split(/\.\s+/).slice(1).join('. ')}</p>
+                      <p className="mt-3 max-w-3xl text-sm leading-relaxed">{content.stack.split(/\.\s+/).slice(1).join('. ')}</p>
                     ) : null}
                   </>
                 ) : (
-                  <p className="mt-3 max-w-3xl whitespace-pre-wrap leading-relaxed">{content.stack}</p>
+                  <p className="mt-3 max-w-3xl whitespace-pre-wrap text-sm leading-relaxed">{content.stack}</p>
                 )}
               </article>
             </div>
@@ -370,14 +380,14 @@ export default async function DocsPage() {
         </section>
 
         {/* API */}
-        <section id="api" className="dx-reveal mx-auto max-w-6xl px-6 py-24">
+        <section id="api" className="dx-reveal mx-auto max-w-6xl px-6 py-16">
           <Heading title="API surface" aside={<p>Every route needs an API key with the right permissions.</p>} />
-          <div className="overflow-hidden rounded-[24px] bg-canvas shadow-[0_0_0_1px_var(--color-line)]">
+          <div className="overflow-hidden rounded-[20px] bg-canvas shadow-[0_0_0_1px_var(--color-line)]">
             <ul className="divide-y divide-line">
               {publicApi.map((api) => (
                 <li
                   key={api.path}
-                  className="grid grid-cols-[auto_1fr_auto] items-center gap-x-4 gap-y-1 px-5 py-4 transition-colors duration-150 hover:bg-surface md:grid-cols-[7rem_1fr_14rem_auto] md:px-7"
+                  className="grid grid-cols-[auto_1fr_auto] items-center gap-x-4 gap-y-1 px-5 py-3 transition-colors duration-150 hover:bg-surface md:grid-cols-[7rem_1fr_14rem_auto] md:px-7"
                 >
                   <span className="flex gap-1.5">
                     {api.method.split('/').map((m) => (
@@ -389,8 +399,8 @@ export default async function DocsPage() {
                       </span>
                     ))}
                   </span>
-                  <code className="min-w-0 break-all font-mono text-sm">{api.path}</code>
-                  <span className="col-start-2 row-start-2 text-sm md:col-start-3 md:row-start-1">{api.purpose}</span>
+                  <code className="min-w-0 break-all font-mono text-xs">{api.path}</code>
+                  <span className="col-start-2 row-start-2 text-xs md:col-start-3 md:row-start-1">{api.purpose}</span>
                   <span className="col-start-3 row-start-1 md:col-start-4">
                     <CopyRoute text={api.path} />
                   </span>
@@ -398,7 +408,7 @@ export default async function DocsPage() {
               ))}
             </ul>
           </div>
-          <div className="mt-6 flex items-center gap-3 text-sm">
+          <div className="mt-4 flex items-center gap-2 text-xs">
             <Braces size={16} className="text-brand" />
             <span>
               Full reference in the repository: <code className="font-mono">docs/05-api-design.md</code>
