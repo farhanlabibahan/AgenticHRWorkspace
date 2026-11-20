@@ -131,6 +131,24 @@ html[data-dx-collapsed] .dx-when-closed {
   box-shadow: 0 18px 40px -24px rgb(15 61 52 / 0.35);
 }
 
+/* Pitch: a soft light in the emerald half, and an accent bar that grows on row hover. */
+.dx-pitch-win::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60% 80% at 100% 0%, rgb(200 169 106 / 0.28), transparent 70%),
+    radial-gradient(50% 60% at 0% 100%, rgb(127 199 164 / 0.18), transparent 70%);
+  pointer-events: none;
+}
+.dx-row-bar {
+  transform: scaleY(0);
+  transition: transform 180ms var(--ease-smooth);
+}
+.dx-row:hover .dx-row-bar {
+  transform: scaleY(1);
+}
+
 /* Hero entrance. */
 .dx-in {
   animation: dx-rise 700ms var(--ease-smooth) both;

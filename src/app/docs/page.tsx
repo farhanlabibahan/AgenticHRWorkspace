@@ -3,20 +3,14 @@ import {
   ArrowRight,
   BadgeCheck,
   Braces,
-  CircleAlert,
   Database,
   FileText,
-  Handshake,
   Inbox,
-  Map as MapIcon,
   MessagesSquare,
   Monitor,
   Server,
   Sparkles,
-  Target,
-  TrendingUp,
   Users,
-  Wallet,
   Workflow,
   type LucideIcon,
 } from 'lucide-react';
@@ -80,12 +74,12 @@ function stackChips(stack: string): string[] | null {
   return parts.length >= 3 && parts.every((p) => p.length <= 28) ? parts : null;
 }
 
-const PITCH_GRID: { key: keyof DocsContent; title: string; icon: LucideIcon; span: string }[] = [
-  { key: 'market', title: 'Who it serves', icon: Target, span: 'md:col-span-4' },
-  { key: 'businessModel', title: 'Business model', icon: Wallet, span: 'md:col-span-2' },
-  { key: 'traction', title: 'Evidence', icon: TrendingUp, span: 'md:col-span-2' },
-  { key: 'roadmap', title: 'Roadmap', icon: MapIcon, span: 'md:col-span-2' },
-  { key: 'ask', title: 'The ask', icon: Handshake, span: 'md:col-span-2' },
+const PITCH_ROWS: { key: keyof DocsContent; title: string }[] = [
+  { key: 'market', title: 'Who it serves' },
+  { key: 'businessModel', title: 'Business model' },
+  { key: 'traction', title: 'Evidence' },
+  { key: 'roadmap', title: 'Roadmap' },
+  { key: 'ask', title: 'The ask' },
 ];
 
 function Unavailable() {
@@ -210,27 +204,37 @@ export default async function DocsPage() {
         {/* Pitch */}
         <section id="pitch" className="dx-reveal mx-auto max-w-6xl px-6 py-16">
           <Heading title="The case for Orqestra" />
-          <div className="grid gap-4 md:grid-cols-2">
-            <article className="dx-card rounded-[20px] bg-surface p-6">
-              <IconDot icon={CircleAlert} />
-              <h3 className="mt-4 text-lg font-semibold">The problem</h3>
-              <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed">{content.problem}</p>
-            </article>
-            <article className="dx-card rounded-[20px] bg-brand p-8 text-on-brand md:p-10">
-              <IconDot icon={Sparkles} inverted />
-              <h3 className="mt-4 text-lg font-semibold">The solution</h3>
-              <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-on-brand/90">{content.solution}</p>
-            </article>
+
+          {/* One focal block: today versus with Orqestra. */}
+          <div className="relative grid overflow-hidden rounded-[20px] shadow-[0_0_0_1px_var(--color-line)] md:grid-cols-2">
+            <div className="bg-surface p-7 md:p-10">
+              <p className="text-xs font-medium text-ink/60">Today</p>
+              <p className="mt-4 max-w-md whitespace-pre-wrap text-lg font-medium leading-snug text-ink/80">{content.problem}</p>
+            </div>
+            <div className="dx-pitch-win relative bg-brand p-7 text-on-brand md:p-10">
+              <p className="text-xs font-medium text-on-brand/70">With Orqestra</p>
+              <p className="relative mt-4 max-w-md whitespace-pre-wrap text-lg font-medium leading-snug">{content.solution}</p>
+            </div>
+            <span
+              aria-hidden
+              className="absolute left-1/2 top-1/2 hidden size-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-canvas text-brand shadow-[0_0_0_6px_var(--color-surface),0_8px_24px_-8px_rgb(15_61_52/0.5)] md:grid"
+            >
+              <ArrowRight size={18} />
+            </span>
           </div>
-          <div className="mt-4 grid gap-4 md:grid-cols-6">
-            {PITCH_GRID.map(({ key, title, icon, span }) => (
-              <article key={key} className={`dx-card rounded-[20px] bg-surface p-5 ${span}`}>
-                <IconDot icon={icon} />
-                <h3 className="mt-4 text-md font-semibold">{title}</h3>
-                <p className="mt-1.5 whitespace-pre-wrap text-sm leading-relaxed">{content[key]}</p>
-              </article>
+
+          {/* The rest as a quiet list: title left, text right, hairlines between. */}
+          <dl className="mt-10 border-b border-line">
+            {PITCH_ROWS.map(({ key, title }) => (
+              <div key={key} className="dx-row group grid gap-1 border-t border-line py-5 md:grid-cols-[220px_1fr] md:gap-8">
+                <dt className="flex items-center gap-3 font-medium transition-colors duration-150 group-hover:text-brand">
+                  <span aria-hidden className="dx-row-bar h-4 w-[3px] rounded-full bg-brand" />
+                  {title}
+                </dt>
+                <dd className="max-w-2xl whitespace-pre-wrap leading-relaxed">{content[key]}</dd>
+              </div>
             ))}
-          </div>
+          </dl>
         </section>
 
         {/* Live view */}
