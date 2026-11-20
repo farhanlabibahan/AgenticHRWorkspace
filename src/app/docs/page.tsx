@@ -227,8 +227,8 @@ export default async function DocsPage() {
           <dl className="mt-10 border-b border-line">
             {PITCH_ROWS.map(({ key, title }) => (
               <div key={key} className="dx-row group grid gap-1 border-t border-line py-5 md:grid-cols-[220px_1fr] md:gap-8">
-                <dt className="flex items-center gap-3 font-medium transition-colors duration-150 group-hover:text-brand">
-                  <span aria-hidden className="dx-row-bar h-4 w-[3px] rounded-full bg-brand" />
+                <dt className="relative font-medium transition-colors duration-150 group-hover:text-brand">
+                  <span aria-hidden className="dx-row-bar absolute -left-3.5 top-0.5 h-4 w-[3px] rounded-full bg-brand" />
                   {title}
                 </dt>
                 <dd className="max-w-2xl whitespace-pre-wrap leading-relaxed">{content[key]}</dd>
